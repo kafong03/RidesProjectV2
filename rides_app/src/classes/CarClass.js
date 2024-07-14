@@ -7,3 +7,5 @@ class CarClass{
         this.passengers = passengers;
     }
 }
+
+export default CarClass;
