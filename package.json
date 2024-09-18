@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@ag-grid-community/styles": "^32.2.0"
+  }
+}

@@ -10,12 +10,14 @@ const AssignRidesPage = () =>{
     const autoSizeStrategy = {
         type: 'fitCellContents'
     };
-    const gridRef = useRef();
+    const dataGridRef = useRef(null);
+    const testGridRef = useRef(null);
     const [passengerList, setPassengerList] = React.useState([]);
     const [dataGridApi, setDataGridApi] = useState(null);
+    const [testGridApi, setTestGridApi] = useState(null);
 
-    const [colDefs, setColDefs] = useState([
-        { field: "name", dndSource: true  },
+    const [dataColDefs, setDataColDefs] = useState([
+        { field: "name", rowDrag: true  },
         { field: "address" },
         { field: "location" },
         { field: "friday" },
@@ -28,7 +30,7 @@ const AssignRidesPage = () =>{
     ]);
 
 
-    const [rowData, setRowData] = useState(
+    const [dataRowData, setDataRowData] = useState(
         // passengerList.map(passenger => ({
         //     id: passenger.id,
         //     name: passenger.name,
@@ -59,127 +61,84 @@ const AssignRidesPage = () =>{
         }]
     );
 
-    const addGridDropZone = (gridPos, api) => {
-        const dropApi = dataGridApi;
-        const dropZone = dropApi.getRowDropZoneParams();
+    const [testRowData, setTestRowData] = useState([{
+        id: "test2",
+        name: "test name",
+        address: "test address",
+        location: "passenger.location",
+        friday: "no",
+        first: "yes",
+        second: "no",
+        third: "no",
+        contact: "passenger.contact",
+        flagged: "passenger.flagged",
+        notes: "passenger.notes"
+    }]);
 
+    const addGridDropZone = (gridPos, api) => {
+        var dropApi = null;
+        if (gridPos === 'data'){
+            dropApi = testGridApi;
+        }
+        else{
+            dropApi = dataGridApi;
+        }
+        const dropZone = dropApi.getRowDropZoneParams({
+        });
+        
         api.addRowDropZone(dropZone);
     };
 
     useEffect(() => {
-        if (dataGridApi) {
+        if (dataGridApi && testGridApi) {
             addGridDropZone('data', dataGridApi);
+            addGridDropZone('test', testGridApi);
         }
     });
 
-    const getRowId = useCallback((params) => String(params.data.id), []);
-
-    const onGridReady = (gridPos, params) => {
-        if (gridPos === 'data') {
+    const onGridReady = (side, params) => {
+        if (side === 'test') {
+            setTestGridApi(params.api);
+        } else {
             setDataGridApi(params.api);
         }
     };
 
-    return (<div
+    const getRowId = useCallback((params) => String(params.data.id), []);
+
+    return (<div>
+        <div
         className="ag-theme-quartz" // applying the grid theme
-        style={{ height: 500 }} // the grid will fill the size of the parent container
+        style={{ height: 500, width: '30%' }} // the grid will fill the size of the parent container
         >
         <AgGridReact
-            rowData={rowData}
-            columnDefs={colDefs}
+            ref={dataGridRef}
+            rowData={dataRowData}
+            columnDefs={dataColDefs}
             autoSizeStrategy={autoSizeStrategy}
             rowDragManaged={true}
+                suppressMoveWhenRowDragging={true}
             getRowId={getRowId}
             onGridReady={(params) => onGridReady('data', params)}
         />
+        </div>
+
+        <div
+        className="ag-theme-quartz" // applying the grid theme
+        style={{ height: 500, width: '30% '}} // the grid will fill the size of the parent container
+        >
+        <AgGridReact
+            ref={testGridRef}
+            rowData={testRowData}
+            columnDefs={dataColDefs}
+            autoSizeStrategy={autoSizeStrategy}
+            rowDragManaged={true}
+                suppressMoveWhenRowDragging={true}
+            getRowId={getRowId}
+            onGridReady={(params) => onGridReady('test', params)}
+        />
+        </div>
         </div>)
 };
-
-// import React, {
-//     useCallback,
-//     useMemo,
-//     useRef,
-//     useState,
-//   } from "react";
-//   import { AgGridReact } from "@ag-grid-community/react";
-//   import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-//   import { ModuleRegistry, createGrid } from "@ag-grid-community/core";
-//   import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-// import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
-//   ModuleRegistry.registerModules([ClientSideRowModelModule]);
-  
-//   var rowIdSequence = 100;
-
-//   function getData() {
-//       var data = [];
-//       ['Red', 'Green', 'Blue', 'Red', 'Green', 'Blue', 'Red', 'Green', 'Blue'].forEach(function (color) {
-//           var newDataItem = {
-//               id: rowIdSequence++,
-//               color: color,
-//               value1: Math.floor(Math.random() * 100),
-//               value2: Math.floor(Math.random() * 100),
-//           };
-//           data.push(newDataItem);
-//       });
-//       return data;
-//   }
-
-//   const AssignRidesPage = () => {
-//     const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
-//     const [rowData, setRowData] = useState(getData());
-//     const [columnDefs, setColumnDefs] = useState([
-//       { valueGetter: "'Drag'", dndSource: true },
-//       { field: "id" },
-//       { field: "color" },
-//       { field: "value1" },
-//       { field: "value2" },
-//     ]);
-//     const defaultColDef = useMemo(() => {
-//       return {
-//         width: 80,
-//         filter: true,
-//       };
-//     }, []);
-//     const rowClassRules = useMemo(() => {
-//       return {
-//         "red-row": 'data.color == "Red"',
-//         "green-row": 'data.color == "Green"',
-//         "blue-row": 'data.color == "Blue"',
-//       };
-//     }, []);
-  
-//     return (
-//       <div style={containerStyle}>
-//             <div className="outer">
-//           <div className="grid-col">
-//             <div
-//               className="ag-theme-quartz" // applying the grid theme
-//                style={{ height: 500 }} // the grid will fill the size of the parent container
-//                     >
-//               <AgGridReact
-//                 rowData={rowData}
-//                 columnDefs={columnDefs}
-//                 defaultColDef={defaultColDef}
-//                 rowClassRules={rowClassRules}
-//                 rowDragManaged={true}
-//               />
-//             </div>
-//           </div>
-  
-//           {/* <div
-//             className="drop-col"
-//             onDragOver={(event) => onDragOver(event)}
-//             onDrop={(event) => onDrop(event)}
-//           >
-//             <span id="eDropTarget" className="drop-target">
-//               {" "}
-//               ==&gt; Drop to here{" "}
-//             </span>
-//             <div id="eJsonDisplay" className="json-display"></div>
-//           </div> */}
-//         </div>
-//       </div>
-//     );
-//   };
 
 export default AssignRidesPage;
