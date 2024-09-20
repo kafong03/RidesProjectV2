@@ -20,7 +20,7 @@ const AssignRidesPage = () =>{
     const [dataGridApi, setDataGridApi] = useState(null);
     const [testGridApi, setTestGridApi] = useState(null);
 
-    const [gridApis, setGridApis] = useState([]);
+    var gridApis = [];
 
     const [dataColDefs, setDataColDefs] = useState([
         { field: "name", rowDrag: true  },
@@ -88,40 +88,39 @@ const AssignRidesPage = () =>{
     }]);
 
     const addGridDropZone = (gridPos, api) => {
-        var dropApi = null;
-        if (gridPos === 'data'){
-            dropApi = testGridApi;
-        }
-        else{
-            dropApi = dataGridApi;
-        }
-        const dropZone = dropApi.getRowDropZoneParams({
-        });
-        
-        api.addRowDropZone(dropZone);
     };
 
     useEffect(() => {
-        if (dataGridApi && testGridApi) {
+        if (dataGridApi) {
             addGridDropZone('data', dataGridApi);
-            addGridDropZone('test', testGridApi);
         }
     });
 
     const onGridReady = (side, params) => {
         if (side === 'test') {
-            setTestGridApi(params.api);
+            //setTestGridApi(params.api);
         } else {
             setDataGridApi(params.api);
         }
+        var curApi = params.api;
+        gridApis = [... gridApis, params.api];
+
     };
 
     const onDriverGridReady = (params) => {
-        setGridApis([... gridApis, params.api])
+        const newApi = params.api;
+        // console.log(dataGridApi);
+        // dataGridApi.addRowDropZone(newApi);
+        // newApi.addRowDropZone(dataGridApi);
+        gridApis.forEach(api => {
+            console.log(api);
+            api.addRowDropZone(newApi.getRowDropZoneParams()); //problem with these
+            newApi.addRowDropZone(api.getRowDropZoneParams());
+        });
+        gridApis = [... gridApis, newApi];
     }
 
     const createDriverGrid = (driver) => {
-        var newRef = null;
         return (<li
     className="ag-theme-quartz" // applying the grid theme
     style={{ height: 500, width: '30% '}} // the grid will fill the size of the parent container
@@ -129,12 +128,11 @@ const AssignRidesPage = () =>{
     >
         {driver}
     <AgGridReact 
-        ref={newRef}
         rowData={testRowData}
         columnDefs={dataColDefs}
         autoSizeStrategy={autoSizeStrategy}
         rowDragManaged={true}
-            suppressMoveWhenRowDragging={true}
+        suppressMoveWhenRowDragging={true}
         getRowId={getRowId}
         onGridReady={(params) => onDriverGridReady(params)}
     />
