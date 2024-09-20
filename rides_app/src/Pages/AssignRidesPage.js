@@ -6,7 +6,11 @@ import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the 
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const AssignRidesPage = () =>{
+    const [driverList, setDriverList] = useState(["Driver1", "Driver2"]);
+      
+
     const autoSizeStrategy = {
         type: 'fitCellContents'
     };
@@ -15,6 +19,8 @@ const AssignRidesPage = () =>{
     const [passengerList, setPassengerList] = React.useState([]);
     const [dataGridApi, setDataGridApi] = useState(null);
     const [testGridApi, setTestGridApi] = useState(null);
+
+    const [gridApis, setGridApis] = useState([]);
 
     const [dataColDefs, setDataColDefs] = useState([
         { field: "name", rowDrag: true  },
@@ -27,6 +33,12 @@ const AssignRidesPage = () =>{
         { field: "contact" },
         { field: "flagged" },
         { field: "notes" },
+    ]);
+
+    const [tempColDefs, setTestColDefs] = useState([
+        { field: "name", rowDrag: true  },
+        { field: "address" },
+        { field: "location" }
     ]);
 
 
@@ -104,6 +116,31 @@ const AssignRidesPage = () =>{
         }
     };
 
+    const onDriverGridReady = (params) => {
+        setGridApis([... gridApis, params.api])
+    }
+
+    const createDriverGrid = (driver) => {
+        var newRef = null;
+        return (<li
+    className="ag-theme-quartz" // applying the grid theme
+    style={{ height: 500, width: '30% '}} // the grid will fill the size of the parent container
+    //Create ref in the .map, pass in to the ag grid. Set the list item id to the driver id. Store the api in a list, will be rendered every time anyway and the driver id will keep track of the necessary stuff. We don't want to pair them bc the positions need to change
+    >
+        {driver}
+    <AgGridReact 
+        ref={newRef}
+        rowData={testRowData}
+        columnDefs={dataColDefs}
+        autoSizeStrategy={autoSizeStrategy}
+        rowDragManaged={true}
+            suppressMoveWhenRowDragging={true}
+        getRowId={getRowId}
+        onGridReady={(params) => onDriverGridReady(params)}
+    />
+    </li>)
+    };
+
     const getRowId = useCallback((params) => String(params.data.id), []);
 
     return (<div>
@@ -122,22 +159,12 @@ const AssignRidesPage = () =>{
             onGridReady={(params) => onGridReady('data', params)}
         />
         </div>
-
-        <div
-        className="ag-theme-quartz" // applying the grid theme
-        style={{ height: 500, width: '30% '}} // the grid will fill the size of the parent container
-        >
-        <AgGridReact
-            ref={testGridRef}
-            rowData={testRowData}
-            columnDefs={dataColDefs}
-            autoSizeStrategy={autoSizeStrategy}
-            rowDragManaged={true}
-                suppressMoveWhenRowDragging={true}
-            getRowId={getRowId}
-            onGridReady={(params) => onGridReady('test', params)}
-        />
-        </div>
+        <ul>
+            {driverList.map(driver => {
+                return createDriverGrid(driver);
+            })}
+        </ul>
+        
         </div>)
 };
 
