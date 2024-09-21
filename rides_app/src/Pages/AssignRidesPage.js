@@ -15,10 +15,8 @@ const AssignRidesPage = () =>{
         type: 'fitCellContents'
     };
     const dataGridRef = useRef(null);
-    const testGridRef = useRef(null);
     const [passengerList, setPassengerList] = React.useState([]);
-    const [dataGridApi, setDataGridApi] = useState(null);
-    const [testGridApi, setTestGridApi] = useState(null);
+    var dataGridApi = null;
 
     var gridApis = [];
 
@@ -87,31 +85,15 @@ const AssignRidesPage = () =>{
         notes: "passenger.notes"
     }]);
 
-    const addGridDropZone = (gridPos, api) => {
-    };
-
-    useEffect(() => {
-        if (dataGridApi) {
-            addGridDropZone('data', dataGridApi);
-        }
-    });
-
-    const onGridReady = (side, params) => {
-        if (side === 'test') {
-            //setTestGridApi(params.api);
-        } else {
-            setDataGridApi(params.api);
-        }
-        var curApi = params.api;
-        gridApis = [... gridApis, params.api];
-
+    const onGridReady = (params) => {
+        dataGridApi = params.api;
     };
 
     const onDriverGridReady = (params) => {
         const newApi = params.api;
         // console.log(dataGridApi);
-        // dataGridApi.addRowDropZone(newApi);
-        // newApi.addRowDropZone(dataGridApi);
+        dataGridApi.addRowDropZone(newApi.getRowDropZoneParams());
+        newApi.addRowDropZone(dataGridApi.getRowDropZoneParams());
         gridApis.forEach(api => {
             console.log(api);
             api.addRowDropZone(newApi.getRowDropZoneParams()); //problem with these
@@ -129,7 +111,7 @@ const AssignRidesPage = () =>{
         {driver}
     <AgGridReact 
         rowData={testRowData}
-        columnDefs={dataColDefs}
+        columnDefs={tempColDefs}
         autoSizeStrategy={autoSizeStrategy}
         rowDragManaged={true}
         suppressMoveWhenRowDragging={true}
@@ -154,7 +136,7 @@ const AssignRidesPage = () =>{
             rowDragManaged={true}
                 suppressMoveWhenRowDragging={true}
             getRowId={getRowId}
-            onGridReady={(params) => onGridReady('data', params)}
+            onGridReady={(params) => onGridReady(params)}
         />
         </div>
         <ul>
