@@ -15,7 +15,7 @@ var testPassengerData3 = new PassengerClass(3, "testPassenger2", "testLocation1"
 var testPassengerData4 = new PassengerClass(4, "testPassenger3", "testLocation1", "testAddress2", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
 
 const AssignRidesPage = () =>{
-    const [driverList, setDriverList] = useState([testPassengerData1, testPassengerData2]);
+    const [driverList, setDriverList] = useState([testPassengerData1, testPassengerData2,testPassengerData3, testPassengerData4]);
       
 
     const autoSizeStrategy = {
@@ -111,10 +111,9 @@ const AssignRidesPage = () =>{
 
     const createDriverGrid = (driver) => {
         return (<li
-    className="ag-theme-quartz" // applying the grid theme
-    style={{ height: 500, width: "100%"}} // the grid will fill the size of the parent container
+    className={"ag-theme-quartz" + " "+ "PassengerGrid"} // applying the grid theme
     //Create ref in the .map, pass in to the ag grid. Set the list item id to the driver id. Store the api in a list, will be rendered every time anyway and the driver id will keep track of the necessary stuff. We don't want to pair them bc the positions need to change
-    key={driver.id}
+    key={driver._id}
     >
         {driver.name}
     <AgGridReact 
@@ -134,8 +133,7 @@ const AssignRidesPage = () =>{
     return (
     <div className='flexDiv'>
         <div
-        className="ag-theme-quartz" // applying the grid theme
-        style={{ height: 500, width: '50%' }} // the grid will fill the size of the parent container
+        className={"ag-theme-quartz" + ' ' + "DataDiv"} // applying the grid theme
         >
         <AgGridReact
             ref={dataGridRef}
@@ -148,7 +146,7 @@ const AssignRidesPage = () =>{
             onGridReady={(params) => onGridReady(params)}
         />
         </div>
-        <div style={{width: "50%"}}>
+        <div className="AssignDiv">
                 <ul className='AssignListItem'>
                     {driverList.map(driver => {
                         return createDriverGrid(driver);
