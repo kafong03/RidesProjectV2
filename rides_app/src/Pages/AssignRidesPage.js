@@ -96,6 +96,19 @@ const AssignRidesPage = () =>{
         notes: "passenger.notes"
     }]);
 
+    function getDropZoneParams(targetApi, sendingApi){
+        return targetApi.getRowDropZoneParams({
+            onDragStop: (params) => {
+              const nodes = params.nodes;
+                sendingApi.applyTransaction({
+                  remove: nodes.map(function (node) {
+                    return node.data;
+                  }),
+                });
+            },
+          })
+    }
+
     const onGridReady = (params) => {
         dataGridApi = params.api;
     };
@@ -103,12 +116,11 @@ const AssignRidesPage = () =>{
     const onDriverGridReady = (params) => {
         const newApi = params.api;
         // console.log(dataGridApi);
-        dataGridApi.addRowDropZone(newApi.getRowDropZoneParams());
-        newApi.addRowDropZone(dataGridApi.getRowDropZoneParams());
+        dataGridApi.addRowDropZone(getDropZoneParams(newApi, dataGridApi));
+        newApi.addRowDropZone(getDropZoneParams(dataGridApi, newApi));
         gridApis.forEach(api => {
-            console.log(api);
-            api.addRowDropZone(newApi.getRowDropZoneParams()); //problem with these
-            newApi.addRowDropZone(api.getRowDropZoneParams());
+            api.addRowDropZone(getDropZoneParams(newApi, api)); //problem with these
+            newApi.addRowDropZone(getDropZoneParams(api, newApi));
         });
         gridApis = [... gridApis, newApi];
     }
