@@ -2,13 +2,20 @@ import React, { useCallback, useRef, useState, useEffect, useMemo } from 'react'
 import { AgGridReact } from 'ag-grid-react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ModuleRegistry } from '@ag-grid-community/core';
+import PassengerClass from '../classes/PassengerClass';
+import "../CSS/AssignPage.css";
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+var testPassengerData1 = new PassengerClass(1, "testPassenger", "testLocation", "testAddress", true, false, true, false,"contact",  new Map(), new Set(), "", new Map(), []);
+var testPassengerData2 = new PassengerClass(2, "testPassenger1", "testLocation", "testAddress1", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
+var testPassengerData3 = new PassengerClass(3, "testPassenger2", "testLocation1", "testAddress2", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
+var testPassengerData4 = new PassengerClass(4, "testPassenger3", "testLocation1", "testAddress2", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
+
 const AssignRidesPage = () =>{
-    const [driverList, setDriverList] = useState(["Driver1", "Driver2"]);
+    const [driverList, setDriverList] = useState([testPassengerData1, testPassengerData2]);
       
 
     const autoSizeStrategy = {
@@ -105,10 +112,11 @@ const AssignRidesPage = () =>{
     const createDriverGrid = (driver) => {
         return (<li
     className="ag-theme-quartz" // applying the grid theme
-    style={{ height: 500, width: '30% '}} // the grid will fill the size of the parent container
+    style={{ height: 500, width: "100%"}} // the grid will fill the size of the parent container
     //Create ref in the .map, pass in to the ag grid. Set the list item id to the driver id. Store the api in a list, will be rendered every time anyway and the driver id will keep track of the necessary stuff. We don't want to pair them bc the positions need to change
+    key={driver.id}
     >
-        {driver}
+        {driver.name}
     <AgGridReact 
         rowData={testRowData}
         columnDefs={tempColDefs}
@@ -123,10 +131,11 @@ const AssignRidesPage = () =>{
 
     const getRowId = useCallback((params) => String(params.data.id), []);
 
-    return (<div>
+    return (
+    <div className='flexDiv'>
         <div
         className="ag-theme-quartz" // applying the grid theme
-        style={{ height: 500, width: '30%' }} // the grid will fill the size of the parent container
+        style={{ height: 500, width: '50%' }} // the grid will fill the size of the parent container
         >
         <AgGridReact
             ref={dataGridRef}
@@ -139,11 +148,13 @@ const AssignRidesPage = () =>{
             onGridReady={(params) => onGridReady(params)}
         />
         </div>
-        <ul>
-            {driverList.map(driver => {
-                return createDriverGrid(driver);
-            })}
-        </ul>
+        <div style={{width: "50%"}}>
+                <ul className='AssignListItem'>
+                    {driverList.map(driver => {
+                        return createDriverGrid(driver);
+                    })}
+                </ul>
+        </div>
         
         </div>)
 };

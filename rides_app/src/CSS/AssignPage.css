@@ -1,0 +1,11 @@
+.flexDiv{
+    display: flex;
+}
+
+.AssignListItem {
+    list-style: none;
+}
+
+.AssignListItem > li{
+    padding-bottom: 25px;
+}
