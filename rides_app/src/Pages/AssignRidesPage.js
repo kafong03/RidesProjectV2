@@ -10,17 +10,24 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var testDriverData1 = new DriverClass(2, "test1", "testAddress1", true, false, true, false, 3, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-var testDriverData2 = new DriverClass(1, "test", "testAddress", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+var testDriverData1 = new DriverClass(1, "test1", "testAddress1", true, false, true, false, 3, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+var testDriverData2 = new DriverClass(2, "test2", "testAddress2", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+var testDriverData3 = new DriverClass(3, "test3", "testAddress3", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+var testDriverData4 = new DriverClass(4, "test4", "testAddress4", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+var testDriverData5 = new DriverClass(5, "test5", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+var testDriverData6 = new DriverClass(6, "test6", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+var testDriverData7 = new DriverClass(7, "test7", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
 
-var testPassengerData1 = new PassengerClass(1, "testPassenger", "testLocation", "testAddress", true, false, true, false,"contact",  new Map(), new Set(), "", new Map(), []);
-var testPassengerData2 = new PassengerClass(2, "testPassenger1", "testLocation", "testAddress1", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
-var testPassengerData3 = new PassengerClass(3, "testPassenger2", "testLocation1", "testAddress2", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
-var testPassengerData4 = new PassengerClass(4, "testPassenger3", "testLocation1", "testAddress2", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
+var testPassengerData1 = new PassengerClass(1, "testPassenger1", "testLocation", "testAddress1", true, false, true, false,"contact",  new Map(), new Set(), "", new Map(), []);
+var testPassengerData2 = new PassengerClass(2, "testPassenger2", "testLocation", "testAddress2", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
+var testPassengerData3 = new PassengerClass(3, "testPassenger3", "testLocation1", "testAddress3", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
+var testPassengerData4 = new PassengerClass(4, "testPassenger4", "testLocation1", "testAddress4", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
+
+const dragWholeRow = true;
 
 const AssignRidesPage = () =>{
-    const [driverList, setDriverList] = useState([testDriverData1, testDriverData2]);
-      
+    const [driverList, setDriverList] = useState([testDriverData1, testDriverData2, testDriverData3, testDriverData4, testDriverData5, testDriverData6, testDriverData7]);
+    const unassignedPassengers = new Set();
 
     const autoSizeStrategy = {
         type: 'fitCellContents'
@@ -65,36 +72,7 @@ const AssignRidesPage = () =>{
             flagged: passenger.flagged,
             notes: passenger.notes
         }))
-
- 
-        // [       {
-        //     id: "test",
-        //     name: "test name",
-        //     address: "test address",
-        //     location: "passenger.location",
-        //     friday: "no",
-        //     first: "yes",
-        //     second: "no",
-        //     third: "no",
-        //     contact: "passenger.contact",
-        //     flagged: "passenger.flagged",
-        //     notes: "passenger.notes"
-        // }]
     );
-
-    const [testRowData, setTestRowData] = useState([{
-        id: "test2",
-        name: "test name",
-        address: "test address",
-        location: "passenger.location",
-        friday: "no",
-        first: "yes",
-        second: "no",
-        third: "no",
-        contact: "passenger.contact",
-        flagged: "passenger.flagged",
-        notes: "passenger.notes"
-    }]);
 
     function getDropZoneParams(targetApi, sendingApi){
         return targetApi.getRowDropZoneParams({
@@ -113,38 +91,63 @@ const AssignRidesPage = () =>{
         dataGridApi = params.api;
     };
 
-    const onDriverGridReady = (params) => {
+    const onDriverGridReady = (params, driverId) => {
         const newApi = params.api;
         // console.log(dataGridApi);
         dataGridApi.addRowDropZone(getDropZoneParams(newApi, dataGridApi));
         newApi.addRowDropZone(getDropZoneParams(dataGridApi, newApi));
-        gridApis.forEach(api => {
+        gridApis.forEach(object => {
+            const api = object.second;
             api.addRowDropZone(getDropZoneParams(newApi, api)); //problem with these
             newApi.addRowDropZone(getDropZoneParams(api, newApi));
         });
-        gridApis = [... gridApis, newApi];
+        gridApis = [... gridApis, {first: driverId, second: newApi}];
     }
 
     const createDriverGrid = (driver) => {
-        return (<li
+        var passengers = []
+        return (
+
+        <li
     className={"ag-theme-quartz" + " "+ "PassengerGrid"} // applying the grid theme
     //Create ref in the .map, pass in to the ag grid. Set the list item id to the driver id. Store the api in a list, will be rendered every time anyway and the driver id will keep track of the necessary stuff. We don't want to pair them bc the positions need to change
     key={driver._id}
     >
-        {driver.name}
+    <div>
+        {driver.name} : {driver.seats} seats : {driver.address}
+    </div>
     <AgGridReact 
-        rowData={[]}
+        rowData={passengers}
         columnDefs={tempColDefs}
         autoSizeStrategy={autoSizeStrategy}
         rowDragManaged={true}
+        rowDragEntireRow={dragWholeRow}
         suppressMoveWhenRowDragging={true}
         getRowId={getRowId}
-        onGridReady={(params) => onDriverGridReady(params)}
+        onGridReady={(params) => onDriverGridReady(params, driver._id)}
     />
     </li>)
     };
 
     const getRowId = useCallback((params) => String(params.data.id), []);
+
+    const updateDriverToPassengerMap = () => {
+        unassignedPassengers.clear();
+        console.log("Unasigned:")
+        dataGridApi.forEachNode(passenger => {
+            unassignedPassengers.add(passenger.id);
+            console.log(passenger.id);
+
+        });
+
+        gridApis.forEach(object => {
+            console.log(object.first + ":");
+            const grid = object.second;
+            grid.forEachNode(passenger => {
+                console.log("   " + passenger.id);
+            });
+        });
+    }
 
     return (
     <div className='flexDiv'>
@@ -157,7 +160,8 @@ const AssignRidesPage = () =>{
             columnDefs={dataColDefs}
             autoSizeStrategy={autoSizeStrategy}
             rowDragManaged={true}
-                suppressMoveWhenRowDragging={true}
+            rowDragEntireRow={dragWholeRow}
+            suppressMoveWhenRowDragging={true}
             getRowId={getRowId}
             onGridReady={(params) => onGridReady(params)}
         />
@@ -169,7 +173,9 @@ const AssignRidesPage = () =>{
                     })}
                 </ul>
         </div>
-        
+        <button onClick={updateDriverToPassengerMap}>
+            
+        </button>
         </div>)
 };
 

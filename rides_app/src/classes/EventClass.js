@@ -5,11 +5,12 @@ class EventClass{
     static get FRIDAY () { return 3};
     static get OTHER () { return 4};
 
-    constructor(id,  eventName, date, type){
+    constructor(id,  eventName, date, type, driverToPassengerMap = new Map()){
         this._id = id;
         this.eventName = eventName;
         this.date = date;
         this.type = type;
+        this.driverToPassenger = driverToPassengerMap; // Map<DriverId, Set<PassengerId>>
     }
 }
 
