@@ -1,60 +1,50 @@
-import React, { useCallback, useRef, useState, useEffect, useMemo } from 'react';
+import React, { useCallback, useRef, useState, useContext, useMemo } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import PassengerClass from '../classes/PassengerClass';
 import DriverClass from '../classes/DriverClass';
+import { StorageContext } from '../Contexts';
 import "../CSS/AssignPage.css";
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var testDriverData1 = new DriverClass(1, "test1", "testAddress1", true, false, true, false, 3, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-var testDriverData2 = new DriverClass(2, "test2", "testAddress2", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-var testDriverData3 = new DriverClass(3, "test3", "testAddress3", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-var testDriverData4 = new DriverClass(4, "test4", "testAddress4", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-var testDriverData5 = new DriverClass(5, "test5", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-var testDriverData6 = new DriverClass(6, "test6", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-var testDriverData7 = new DriverClass(7, "test7", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-
-var testPassengerData1 = new PassengerClass(1, "testPassenger1", "testLocation", "testAddress1", true, false, true, false,"contact",  new Map(), new Set(), "", new Map(), []);
-var testPassengerData2 = new PassengerClass(2, "testPassenger2", "testLocation", "testAddress2", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
-var testPassengerData3 = new PassengerClass(3, "testPassenger3", "testLocation1", "testAddress3", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
-var testPassengerData4 = new PassengerClass(4, "testPassenger4", "testLocation1", "testAddress4", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
-
 const dragWholeRow = true;
 
 const AssignRidesPage = () =>{
-    const [driverList, setDriverList] = useState([testDriverData1, testDriverData2, testDriverData3, testDriverData4, testDriverData5, testDriverData6, testDriverData7]);
+    const StorageHandler = useContext(StorageContext);
+
+    const [driverList, setDriverList] = useState(StorageHandler.GetDrivers());
     const unassignedPassengers = new Set();
 
     const autoSizeStrategy = {
         type: 'fitCellContents'
     };
     const dataGridRef = useRef(null);
-    const [passengerList, setPassengerList] = React.useState([testPassengerData1, testPassengerData2, testPassengerData3, testPassengerData4]);
+    const [passengerList, setPassengerList] = React.useState(StorageHandler.GetPassengers());
     var dataGridApi = null;
 
     var gridApis = [];
 
     const [dataColDefs, setDataColDefs] = useState([
-        { field: "name", rowDrag: true  },
-        { field: "address" },
-        { field: "location" },
-        { field: "friday" },
-        { field: "first" },
-        { field: "second" },
-        { field: "third" },
-        { field: "contact" },
-        { field: "flagged" },
-        { field: "notes" },
+        { field: "name", rowDrag: true, suppressMovable: true, },
+        { field: "address", suppressMovable: true, },
+        { field: "location", suppressMovable: true, },
+        { field: "friday", suppressMovable: true, },
+        { field: "first", suppressMovable: true, },
+        { field: "second", suppressMovable: true, },
+        { field: "third", suppressMovable: true, },
+        { field: "contact", suppressMovable: true, },
+        { field: "flagged", suppressMovable: true, },
+        { field: "notes", suppressMovable: true, },
     ]);
 
     const [tempColDefs, setTestColDefs] = useState([
-        { field: "name", rowDrag: true  },
-        { field: "address" },
-        { field: "location" }
+        { field: "name", rowDrag: true, suppressMovable: true,  },
+        { field: "address", suppressMovable: true, },
+        { field: "location", suppressMovable: true, }
     ]);
 
 
