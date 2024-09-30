@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useContext, useMemo } from 'react';
+import React, { useCallback, useRef, useState, useContext, useMemo, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -13,20 +13,23 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const dragWholeRow = true;
 
-const AssignRidesPage = () =>{
-    const StorageHandler = useContext(StorageContext);
+const AssignRidesPage = ({eventMapping}) =>{
+    const StorageHandler = useContext(StorageContext); 
 
-    const [driverList, setDriverList] = useState(StorageHandler.GetDrivers());
-    const unassignedPassengers = new Set();
+    // Use memo or ref to prevent rerender, may not be necessary
+    var masterDriverList = useMemo(() => StorageHandler.GetDrivers(), [masterDriverList]);
+
+    var assignedPassengers = useMemo(() => new Set(), [assignedPassengers]);
 
     const autoSizeStrategy = {
         type: 'fitCellContents'
     };
     const dataGridRef = useRef(null);
-    const [passengerList, setPassengerList] = React.useState(StorageHandler.GetPassengers());
+
+    var masterPassengerList = useMemo(() => StorageHandler.GetPassengers(), masterPassengerList);
     var dataGridApi = null;
 
-    var gridApis = [];
+    var gridApis = useMemo(() => [], [gridApis]);
 
     const [dataColDefs, setDataColDefs] = useState([
         { field: "name", rowDrag: true, suppressMovable: true, },
@@ -48,9 +51,8 @@ const AssignRidesPage = () =>{
     ]);
 
 
-    const [dataRowData, setDataRowData] = useState(
-        passengerList.map(passenger => ({
-            id: passenger._id,
+    function getPassengerTableInfo(passenger){
+        return {id: passenger._id,
             name: passenger.name,
             address: passenger.address,
             location: passenger.location,
@@ -60,9 +62,8 @@ const AssignRidesPage = () =>{
             third: passenger.sunday3rd ? "yes" : "no",
             contact: passenger.contact,
             flagged: passenger.flagged,
-            notes: passenger.notes
-        }))
-    );
+            notes: passenger.notes};
+    }
 
     function getDropZoneParams(targetApi, sendingApi){
         return targetApi.getRowDropZoneParams({
@@ -79,6 +80,13 @@ const AssignRidesPage = () =>{
 
     const onGridReady = (params) => {
         dataGridApi = params.api;
+        const newList = masterPassengerList.filter(passenger => (!assignedPassengers.has(passenger._id)));
+
+        dataGridApi.applyTransaction({
+            add: newList.map(passenger => getPassengerTableInfo(passenger)),
+            addIndex: 0,
+        });
+        
     };
 
     const onDriverGridReady = (params, driverId) => {
@@ -96,6 +104,17 @@ const AssignRidesPage = () =>{
 
     const createDriverGrid = (driver) => {
         var passengers = []
+
+        const passengerSet = eventMapping[driver._id];
+        if (passengerSet){
+            
+            passengerSet.forEach(passengerId => {
+                const passenger = masterPassengerList.find(passenger => passengerId === passenger._id);
+                passengers.push(getPassengerTableInfo(passenger));
+                assignedPassengers.add(passengerId);
+            });
+        }
+
         return (
 
         <li
@@ -121,22 +140,29 @@ const AssignRidesPage = () =>{
 
     const getRowId = useCallback((params) => String(params.data.id), []);
 
+    // Handle setting assigned bool and driver updates
     const updateDriverToPassengerMap = () => {
-        unassignedPassengers.clear();
-        console.log("Unasigned:")
-        dataGridApi.forEachNode(passenger => {
-            unassignedPassengers.add(passenger.id);
-            console.log(passenger.id);
-
-        });
+        assignedPassengers.clear();
+        eventMapping.clear();
 
         gridApis.forEach(object => {
             console.log(object.first + ":");
             const grid = object.second;
+            const driver = masterPassengerList.find(driver => object.first == driver._id);
+            eventMapping[driver._id] = new Set();
             grid.forEachNode(passenger => {
+                assignedPassengers.add(passenger.id);
+                eventMapping[driver._id].add(passenger.id);
                 console.log("   " + passenger.id);
             });
         });
+
+        dataGridApi.forEachNode(passenger => {
+            if (! assignedPassengers.has(passenger.id)){
+                assignedPassengers.add(passenger.id);
+            }
+        });
+        // Conforming event mapping to tables
     }
 
     return (
@@ -146,7 +172,7 @@ const AssignRidesPage = () =>{
         >
         <AgGridReact
             ref={dataGridRef}
-            rowData={dataRowData}
+            rowData={[]}
             columnDefs={dataColDefs}
             autoSizeStrategy={autoSizeStrategy}
             rowDragManaged={true}
@@ -158,7 +184,7 @@ const AssignRidesPage = () =>{
         </div>
         <div className="AssignDiv">
                 <ul className='AssignListItem'>
-                    {driverList.map(driver => {
+                    {masterDriverList.map(driver => {
                         return createDriverGrid(driver);
                     })}
                 </ul>

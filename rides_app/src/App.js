@@ -9,7 +9,7 @@ function App() {
   return (
     <StorageContext.Provider value = {storageHandler}>
     <div className="App">
-      <AssignRidesPage/>
+      <AssignRidesPage eventMapping={ storageHandler.GetEvents()[0].driverToPassenger}/>
     </div>
     </StorageContext.Provider>
   );
