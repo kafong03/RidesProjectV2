@@ -14,6 +14,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 const dragWholeRow = true;
 
 const AssignRidesPage = ({eventMapping}) =>{
+    const currentEventMapping = eventMapping;
     const StorageHandler = useContext(StorageContext); 
 
     // Use memo or ref to prevent rerender, may not be necessary
@@ -44,11 +45,11 @@ const AssignRidesPage = ({eventMapping}) =>{
         { field: "notes", suppressMovable: true, },
     ]);
 
-    const [tempColDefs, setTestColDefs] = useState([
+    const minColDefs = [
         { field: "name", rowDrag: true, suppressMovable: true,  },
         { field: "address", suppressMovable: true, },
         { field: "location", suppressMovable: true, }
-    ]);
+    ];
 
 
     function getPassengerTableInfo(passenger){
@@ -105,7 +106,7 @@ const AssignRidesPage = ({eventMapping}) =>{
     const createDriverGrid = (driver) => {
         var passengers = []
 
-        const passengerSet = eventMapping[driver._id];
+        const passengerSet = currentEventMapping[driver._id];
         if (passengerSet){
             
             passengerSet.forEach(passengerId => {
@@ -127,7 +128,7 @@ const AssignRidesPage = ({eventMapping}) =>{
     </div>
     <AgGridReact 
         rowData={passengers}
-        columnDefs={tempColDefs}
+        columnDefs={minColDefs}
         autoSizeStrategy={autoSizeStrategy}
         rowDragManaged={true}
         rowDragEntireRow={dragWholeRow}
@@ -143,17 +144,15 @@ const AssignRidesPage = ({eventMapping}) =>{
     // Handle setting assigned bool and driver updates
     const updateDriverToPassengerMap = () => {
         assignedPassengers.clear();
-        eventMapping.clear();
+        currentEventMapping.clear();
 
         gridApis.forEach(object => {
-            console.log(object.first + ":");
             const grid = object.second;
-            const driver = masterPassengerList.find(driver => object.first == driver._id);
-            eventMapping[driver._id] = new Set();
+            const driver = masterDriverList.find(driver => object.first === driver._id);
+            currentEventMapping[driver._id] = new Set();
             grid.forEachNode(passenger => {
                 assignedPassengers.add(passenger.id);
-                eventMapping[driver._id].add(passenger.id);
-                console.log("   " + passenger.id);
+                currentEventMapping[driver._id].add(passenger.id);
             });
         });
 
@@ -162,7 +161,9 @@ const AssignRidesPage = ({eventMapping}) =>{
                 assignedPassengers.add(passenger.id);
             }
         });
-        // Conforming event mapping to tables
+
+        console.log(eventMapping);
+        // Conforming event mapping to tables, send update to cloud
     }
 
     return (
