@@ -1,0 +1,25 @@
+/* #contact */
+#contact {
+  border-collapse: collapse;
+}
+
+#contact td, #contact th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#contact th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4A85C4;
+  color: white;
+}
+
+#contact tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#contact tr:hover {
+  background-color: #ddd;
+}
