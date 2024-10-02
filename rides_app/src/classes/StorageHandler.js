@@ -39,6 +39,10 @@ class StorageHandler{
     GetEvents(){
         return this.testEventList;
     }
+
+    SetEvent(updatedEvent){
+        console.log(updatedEvent);
+    }
 }
 
 export default StorageHandler;

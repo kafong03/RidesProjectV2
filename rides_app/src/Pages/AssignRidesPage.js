@@ -13,8 +13,8 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const dragWholeRow = true;
 
-const AssignRidesPage = ({eventMapping}) =>{
-    const currentEventMapping = eventMapping;
+const AssignRidesPage = ({curEvent}) =>{
+    const currentEventMapping = curEvent.driverToPassenger;
     const StorageHandler = useContext(StorageContext); 
 
     // Use memo or ref to prevent rerender, may not be necessary
@@ -28,9 +28,13 @@ const AssignRidesPage = ({eventMapping}) =>{
     const dataGridRef = useRef(null);
 
     var masterPassengerList = useMemo(() => StorageHandler.GetPassengers(), masterPassengerList);
+    const [passengerList, setPassengerList] = useState([]);
+
     var dataGridApi = null;
 
     var gridApis = useMemo(() => [], [gridApis]);
+
+    const [driverGrids, setDriverGrids] = useState([]);
 
     const [dataColDefs, setDataColDefs] = useState([
         { field: "name", rowDrag: true, suppressMovable: true, },
@@ -81,13 +85,14 @@ const AssignRidesPage = ({eventMapping}) =>{
 
     const onGridReady = (params) => {
         dataGridApi = params.api;
-        const newList = masterPassengerList.filter(passenger => (!assignedPassengers.has(passenger._id)));
-
-        dataGridApi.applyTransaction({
-            add: newList.map(passenger => getPassengerTableInfo(passenger)),
-            addIndex: 0,
-        });
         
+        
+        setDriverGrids([... masterDriverList.map(driver => {
+            return createDriverGrid(driver);
+        })]);
+        
+        const newPassengerList = masterPassengerList.filter(passenger => !assignedPassengers.has(passenger._id))
+        setPassengerList(newPassengerList.map(passenger => getPassengerTableInfo(passenger)));
     };
 
     const onDriverGridReady = (params, driverId) => {
@@ -141,6 +146,7 @@ const AssignRidesPage = ({eventMapping}) =>{
 
     const getRowId = useCallback((params) => String(params.data.id), []);
 
+
     // Handle setting assigned bool and driver updates
     const updateDriverToPassengerMap = () => {
         assignedPassengers.clear();
@@ -162,7 +168,8 @@ const AssignRidesPage = ({eventMapping}) =>{
             }
         });
 
-        console.log(eventMapping);
+        curEvent.driverToPassenger = currentEventMapping;
+        StorageHandler.UpdateEvent(curEvent);
         // Conforming event mapping to tables, send update to cloud
     }
 
@@ -173,7 +180,7 @@ const AssignRidesPage = ({eventMapping}) =>{
         >
         <AgGridReact
             ref={dataGridRef}
-            rowData={[]}
+            rowData={passengerList}
             columnDefs={dataColDefs}
             autoSizeStrategy={autoSizeStrategy}
             rowDragManaged={true}
@@ -185,9 +192,7 @@ const AssignRidesPage = ({eventMapping}) =>{
         </div>
         <div className="AssignDiv">
                 <ul className='AssignListItem'>
-                    {masterDriverList.map(driver => {
-                        return createDriverGrid(driver);
-                    })}
+                   {driverGrids} 
                 </ul>
         </div>
         <button onClick={updateDriverToPassengerMap}>
