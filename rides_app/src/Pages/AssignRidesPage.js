@@ -30,7 +30,7 @@ const AssignRidesPage = ({curEvent}) =>{
     var masterPassengerList = useMemo(() => StorageHandler.GetPassengers(), masterPassengerList);
     const [passengerList, setPassengerList] = useState([]);
 
-    var dataGridApi = null;
+    var dataGridApi = useRef(null);
 
     var gridApis = useMemo(() => [], [gridApis]);
 
@@ -84,8 +84,7 @@ const AssignRidesPage = ({curEvent}) =>{
     }
 
     const onGridReady = (params) => {
-        dataGridApi = params.api;
-        
+        dataGridApi.current = params.api;
         
         setDriverGrids([... masterDriverList.map(driver => {
             return createDriverGrid(driver);
@@ -97,9 +96,8 @@ const AssignRidesPage = ({curEvent}) =>{
 
     const onDriverGridReady = (params, driverId) => {
         const newApi = params.api;
-        // console.log(dataGridApi);
-        dataGridApi.addRowDropZone(getDropZoneParams(newApi, dataGridApi));
-        newApi.addRowDropZone(getDropZoneParams(dataGridApi, newApi));
+        dataGridApi.current.addRowDropZone(getDropZoneParams(newApi, dataGridApi.current));
+        newApi.addRowDropZone(getDropZoneParams(dataGridApi.current, newApi));
         gridApis.forEach(object => {
             const api = object.second;
             api.addRowDropZone(getDropZoneParams(newApi, api)); //problem with these
@@ -149,6 +147,7 @@ const AssignRidesPage = ({curEvent}) =>{
 
     // Handle setting assigned bool and driver updates
     const updateDriverToPassengerMap = () => {
+
         assignedPassengers.clear();
         currentEventMapping.clear();
 
@@ -161,8 +160,7 @@ const AssignRidesPage = ({curEvent}) =>{
                 currentEventMapping[driver._id].add(passenger.id);
             });
         });
-
-        dataGridApi.forEachNode(passenger => {
+        dataGridApi.current.forEachNode(passenger => {
             if (! assignedPassengers.has(passenger.id)){
                 assignedPassengers.add(passenger.id);
             }
@@ -171,6 +169,14 @@ const AssignRidesPage = ({curEvent}) =>{
         curEvent.driverToPassenger = currentEventMapping;
         StorageHandler.UpdateEvent(curEvent);
         // Conforming event mapping to tables, send update to cloud
+    }
+
+    const filterDrivers = () => {
+        gridApis.clear();
+
+        setDriverGrids([... masterDriverList.map(driver => {
+            return createDriverGrid(driver);
+        })]);
     }
 
     return (

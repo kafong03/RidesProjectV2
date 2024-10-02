@@ -40,7 +40,7 @@ class StorageHandler{
         return this.testEventList;
     }
 
-    SetEvent(updatedEvent){
+    UpdateEvent(updatedEvent){
         console.log(updatedEvent);
     }
 }
