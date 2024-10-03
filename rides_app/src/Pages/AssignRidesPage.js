@@ -14,6 +14,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 const dragWholeRow = true;
 
 const AssignRidesPage = ({curEvent}) =>{
+    const currentEvent = curEvent;
     const currentEventMapping = curEvent.driverToPassenger;
     const StorageHandler = useContext(StorageContext); 
 
@@ -32,7 +33,7 @@ const AssignRidesPage = ({curEvent}) =>{
 
     var dataGridApi = useRef(null);
 
-    var gridApis = useMemo(() => [], [gridApis]);
+    var gridApis = useRef([]);
 
     const [driverGrids, setDriverGrids] = useState([]);
 
@@ -98,12 +99,12 @@ const AssignRidesPage = ({curEvent}) =>{
         const newApi = params.api;
         dataGridApi.current.addRowDropZone(getDropZoneParams(newApi, dataGridApi.current));
         newApi.addRowDropZone(getDropZoneParams(dataGridApi.current, newApi));
-        gridApis.forEach(object => {
+        gridApis.current.forEach(object => {
             const api = object.second;
             api.addRowDropZone(getDropZoneParams(newApi, api)); //problem with these
             newApi.addRowDropZone(getDropZoneParams(api, newApi));
         });
-        gridApis = [... gridApis, {first: driverId, second: newApi}];
+        gridApis.current = [... gridApis.current, {first: driverId, second: newApi}];
     }
 
     const createDriverGrid = (driver) => {
@@ -111,9 +112,9 @@ const AssignRidesPage = ({curEvent}) =>{
 
         const passengerSet = currentEventMapping[driver._id];
         if (passengerSet){
-            
             passengerSet.forEach(passengerId => {
-                const passenger = masterPassengerList.find(passenger => passengerId === passenger._id);
+                const passenger = masterPassengerList.find(passenger => passengerId == passenger._id);
+                console.log(passenger);
                 passengers.push(getPassengerTableInfo(passenger));
                 assignedPassengers.add(passengerId);
             });
@@ -150,8 +151,8 @@ const AssignRidesPage = ({curEvent}) =>{
 
         assignedPassengers.clear();
         currentEventMapping.clear();
-
-        gridApis.forEach(object => {
+        
+        gridApis.current.forEach(object => {
             const grid = object.second;
             const driver = masterDriverList.find(driver => object.first === driver._id);
             currentEventMapping[driver._id] = new Set();
@@ -166,15 +167,16 @@ const AssignRidesPage = ({curEvent}) =>{
             }
         });
 
-        curEvent.driverToPassenger = currentEventMapping;
-        StorageHandler.UpdateEvent(curEvent);
+        //console.log(currentEventMapping);
+        currentEvent.UpdateDriverToPassengerMap(currentEventMapping);
+        StorageHandler.UpdateEvent(currentEvent);
         // Conforming event mapping to tables, send update to cloud
     }
 
     const filterDrivers = () => {
-        gridApis.clear();
+        gridApis.current = [];
 
-        setDriverGrids([... masterDriverList.map(driver => {
+        setDriverGrids([... masterDriverList.sort(driver => 4-driver._id).map(driver => {
             return createDriverGrid(driver);
         })]);
     }
@@ -202,6 +204,10 @@ const AssignRidesPage = ({curEvent}) =>{
                 </ul>
         </div>
         <button onClick={updateDriverToPassengerMap}>
+            
+        </button>
+        
+        <button onClick={filterDrivers}>
             
         </button>
         </div>)

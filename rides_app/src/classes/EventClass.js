@@ -10,6 +10,14 @@ class EventClass{
         this.type = type;
         this.driverToPassenger = driverToPassengerMap; // Map<DriverId, Set<PassengerId>>
     }
+
+    UpdateDriverToPassengerMap(newMapping) {
+        this.driverToPassenger.clear();
+        //console.log(newMapping);
+        newMapping.forEach((driverId, passengerSet) => {
+            this.driverToPassenger[driverId] = passengerSet;
+        });
+    }
 }
 
 export default EventClass;
