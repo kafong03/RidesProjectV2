@@ -19,8 +19,8 @@ class StorageHandler{
         var testPassengerData4 = new PassengerClass(4, "testPassenger4", "testLocation1", "testAddress4", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
         
         var testEventMapping = new Map();
-        testEventMapping[testDriverData1._id] = new Set([testPassengerData3._id]);
-        testEventMapping[testDriverData2._id] = new Set([testPassengerData1._id]);
+        testEventMapping.set(testDriverData1._id, new Set([testPassengerData3._id]));
+        testEventMapping.set(testDriverData2._id, new Set([testPassengerData1._id]));
         var testEvent = new EventClass(1, "testEvent", new Date(), Event.SUNDAY, testEventMapping);
 
         this.testDriverList = [testDriverData1, testDriverData2, testDriverData3, testDriverData4, testDriverData5, testDriverData6, testDriverData7];
@@ -41,7 +41,63 @@ class StorageHandler{
     }
 
     UpdateEvent(updatedEvent){
+        // const oldEvent = this.testEventList.find(event => event._id === updatedEvent._id)
+        // var sameMapping = true;
+        // if (oldEvent && oldEvent.eventName === updatedEvent.eventName &&
+        //     oldEvent.date === updatedEvent.date &&
+        //     oldEvent.type === updatedEvent.type
+        // ){
+        //     updatedEvent.driverToPassenger.forEach((driverId, passengerSet) => {
+        //         const oldPassengerSet = oldEvent.driverToPassenger[driverId];
+        //         if (oldPassengerSet && oldPassengerSet.size === passengerSet.size){
+        //             passengerSet.forEach(passengerId => {
+        //                 if (! oldPassengerSet.has(passengerId)){
+        //                     sameMapping = false;
+        //                 }
+        //             });
+        //         }
+        //         else{
+        //             sameMapping = false;
+        //         }
+        //     });
+        // }
+        // else{
+        //     sameMapping = false;
+        // }
+
         console.log(updatedEvent);
+        // if(! sameMapping){
+        // }
+    }
+
+    UpdateDriverToPassengerMap(eventId, newMapping){
+        const oldEvent = this.testEventList.find(event => event._id === eventId);
+        if (oldEvent){
+            var sameMapping = true;
+            
+            newMapping.forEach((passengerSet, driverId) => {
+                const oldPassengerSet = oldEvent.driverToPassenger.get(driverId);
+                
+                // console.log(oldPassengerSet);
+                // console.log(passengerSet);
+
+                if (oldPassengerSet && oldPassengerSet.size === passengerSet.size){
+                    passengerSet.forEach(passengerId => {
+                        if (! oldPassengerSet.has(passengerId)){
+                            sameMapping = false;
+                        }
+                    });
+                }
+                else{
+                    sameMapping = false;
+                }
+            });
+        }
+
+        if(! sameMapping){
+            oldEvent.UpdateDriverToPassengerMap(newMapping);
+            this.UpdateEvent(oldEvent);
+        }
     }
 }
 

@@ -12,11 +12,12 @@ class EventClass{
     }
 
     UpdateDriverToPassengerMap(newMapping) {
-        this.driverToPassenger.clear();
-        //console.log(newMapping);
-        newMapping.forEach((driverId, passengerSet) => {
-            this.driverToPassenger[driverId] = passengerSet;
-        });
+        // this.driverToPassenger.clear();
+        // //console.log(newMapping);
+        // newMapping.forEach((driverId, passengerSet) => {
+        //     this.driverToPassenger[driverId] = passengerSet;
+        // });
+        this.driverToPassenger = new Map(newMapping);
     }
 }
 

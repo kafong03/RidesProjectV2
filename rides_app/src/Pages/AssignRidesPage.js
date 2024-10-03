@@ -15,8 +15,10 @@ const dragWholeRow = true;
 
 const AssignRidesPage = ({curEvent}) =>{
     const currentEvent = curEvent;
-    const currentEventMapping = curEvent.driverToPassenger;
+    const currentEventMapping = new Map(curEvent.driverToPassenger);
+
     const StorageHandler = useContext(StorageContext); 
+    var eventUpdated = useRef(false);
 
     // Use memo or ref to prevent rerender, may not be necessary
     var masterDriverList = useMemo(() => StorageHandler.GetDrivers(), [masterDriverList]);
@@ -110,11 +112,10 @@ const AssignRidesPage = ({curEvent}) =>{
     const createDriverGrid = (driver) => {
         var passengers = []
 
-        const passengerSet = currentEventMapping[driver._id];
+        const passengerSet = currentEventMapping.get(driver._id);
         if (passengerSet){
             passengerSet.forEach(passengerId => {
                 const passenger = masterPassengerList.find(passenger => passengerId == passenger._id);
-                console.log(passenger);
                 passengers.push(getPassengerTableInfo(passenger));
                 assignedPassengers.add(passengerId);
             });
@@ -150,16 +151,20 @@ const AssignRidesPage = ({curEvent}) =>{
     const updateDriverToPassengerMap = () => {
 
         assignedPassengers.clear();
-        currentEventMapping.clear();
         
         gridApis.current.forEach(object => {
             const grid = object.second;
-            const driver = masterDriverList.find(driver => object.first === driver._id);
-            currentEventMapping[driver._id] = new Set();
-            grid.forEachNode(passenger => {
-                assignedPassengers.add(passenger.id);
-                currentEventMapping[driver._id].add(passenger.id);
-            });
+            const driverId = object.first;
+            if (grid.getDisplayedRowCount() > 0){
+                currentEventMapping.set(driverId, new Set());
+                grid.forEachNode(passenger => {
+                    assignedPassengers.add(passenger.id);
+                    currentEventMapping.get(driverId).add(passenger.id);
+                });
+            }
+            else if (currentEventMapping.has(driverId)){
+                currentEventMapping.delete(driverId);
+            }
         });
         dataGridApi.current.forEachNode(passenger => {
             if (! assignedPassengers.has(passenger.id)){
@@ -167,13 +172,13 @@ const AssignRidesPage = ({curEvent}) =>{
             }
         });
 
-        //console.log(currentEventMapping);
-        currentEvent.UpdateDriverToPassengerMap(currentEventMapping);
-        StorageHandler.UpdateEvent(currentEvent);
+        StorageHandler.UpdateDriverToPassengerMap(currentEvent._id, currentEventMapping);
+        // StorageHandler.UpdateEvent(currentEvent);
         // Conforming event mapping to tables, send update to cloud
     }
 
     const filterDrivers = () => {
+        StorageHandler.UpdateEvent(currentEvent);
         gridApis.current = [];
 
         setDriverGrids([... masterDriverList.sort(driver => 4-driver._id).map(driver => {
