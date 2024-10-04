@@ -5,18 +5,18 @@ import EventClass from "./EventClass";
 class StorageHandler{
     constructor(){
 
-        var testDriverData1 = new DriverClass(1, "test1", "testAddress1", true, false, true, false, 3, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-        var testDriverData2 = new DriverClass(2, "test2", "testAddress2", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-        var testDriverData3 = new DriverClass(3, "test3", "testAddress3", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-        var testDriverData4 = new DriverClass(4, "test4", "testAddress4", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-        var testDriverData5 = new DriverClass(5, "test5", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-        var testDriverData6 = new DriverClass(6, "test6", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
-        var testDriverData7 = new DriverClass(7, "test7", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+        var testDriverData1 = new DriverClass("1", "test1", "testAddress1", true, false, true, false, 3, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+        var testDriverData2 = new DriverClass("2", "test2", "testAddress2", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+        var testDriverData3 = new DriverClass("3", "test3", "testAddress3", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+        var testDriverData4 = new DriverClass("4", "test4", "testAddress4", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+        var testDriverData5 = new DriverClass("5", "test5", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+        var testDriverData6 = new DriverClass("6", "test6", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
+        var testDriverData7 = new DriverClass("7", "test7", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
         
-        var testPassengerData1 = new PassengerClass(1, "testPassenger1", "testLocation", "testAddress1", true, false, true, false,"contact",  new Map(), new Set(), "", new Map(), []);
-        var testPassengerData2 = new PassengerClass(2, "testPassenger2", "testLocation", "testAddress2", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
-        var testPassengerData3 = new PassengerClass(3, "testPassenger3", "testLocation1", "testAddress3", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
-        var testPassengerData4 = new PassengerClass(4, "testPassenger4", "testLocation1", "testAddress4", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
+        var testPassengerData1 = new PassengerClass("1", "testPassenger1", "testLocation", "testAddress1", true, false, true, false,"contact",  new Map(), new Set(), "", new Map(), []);
+        var testPassengerData2 = new PassengerClass("2", "testPassenger2", "testLocation", "testAddress2", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
+        var testPassengerData3 = new PassengerClass("3", "testPassenger3", "testLocation1", "testAddress3", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
+        var testPassengerData4 = new PassengerClass("4", "testPassenger4", "testLocation1", "testAddress4", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
         
         var testEventMapping = new Map();
         testEventMapping.set(testDriverData1._id, new Set([testPassengerData3._id]));
@@ -72,15 +72,16 @@ class StorageHandler{
 
     UpdateDriverToPassengerMap(eventId, newMapping){
         const oldEvent = this.testEventList.find(event => event._id === eventId);
-        if (oldEvent){
-            var sameMapping = true;
+        // console.log(oldEvent.driverToPassenger)
+        // console.log(newMapping)
+        var sameMapping = true;
+        if (oldEvent && oldEvent.driverToPassenger.size === newMapping.size){
             
             newMapping.forEach((passengerSet, driverId) => {
                 const oldPassengerSet = oldEvent.driverToPassenger.get(driverId);
                 
                 // console.log(oldPassengerSet);
                 // console.log(passengerSet);
-
                 if (oldPassengerSet && oldPassengerSet.size === passengerSet.size){
                     passengerSet.forEach(passengerId => {
                         if (! oldPassengerSet.has(passengerId)){
@@ -92,6 +93,9 @@ class StorageHandler{
                     sameMapping = false;
                 }
             });
+        }
+        else{
+            sameMapping = false;
         }
 
         if(! sameMapping){

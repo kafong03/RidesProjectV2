@@ -15,10 +15,9 @@ const dragWholeRow = true;
 
 const AssignRidesPage = ({curEvent}) =>{
     const currentEvent = curEvent;
-    const currentEventMapping = new Map(curEvent.driverToPassenger);
+    const currentEventMapping = useRef(new Map(curEvent.driverToPassenger)); //Make sure to use ref
 
     const StorageHandler = useContext(StorageContext); 
-    var eventUpdated = useRef(false);
 
     // Use memo or ref to prevent rerender, may not be necessary
     var masterDriverList = useMemo(() => StorageHandler.GetDrivers(), [masterDriverList]);
@@ -112,7 +111,7 @@ const AssignRidesPage = ({curEvent}) =>{
     const createDriverGrid = (driver) => {
         var passengers = []
 
-        const passengerSet = currentEventMapping.get(driver._id);
+        const passengerSet = currentEventMapping.current.get(driver._id);
         if (passengerSet){
             passengerSet.forEach(passengerId => {
                 const passenger = masterPassengerList.find(passenger => passengerId == passenger._id);
@@ -156,14 +155,14 @@ const AssignRidesPage = ({curEvent}) =>{
             const grid = object.second;
             const driverId = object.first;
             if (grid.getDisplayedRowCount() > 0){
-                currentEventMapping.set(driverId, new Set());
+                currentEventMapping.current.set(driverId, new Set());
                 grid.forEachNode(passenger => {
                     assignedPassengers.add(passenger.id);
-                    currentEventMapping.get(driverId).add(passenger.id);
+                    currentEventMapping.current.get(driverId).add(passenger.id);
                 });
             }
-            else if (currentEventMapping.has(driverId)){
-                currentEventMapping.delete(driverId);
+            else if (currentEventMapping.current.has(driverId)){
+                currentEventMapping.current.delete(driverId);
             }
         });
         dataGridApi.current.forEachNode(passenger => {
@@ -172,7 +171,7 @@ const AssignRidesPage = ({curEvent}) =>{
             }
         });
 
-        StorageHandler.UpdateDriverToPassengerMap(currentEvent._id, currentEventMapping);
+        StorageHandler.UpdateDriverToPassengerMap(currentEvent._id, currentEventMapping.current);
         // StorageHandler.UpdateEvent(currentEvent);
         // Conforming event mapping to tables, send update to cloud
     }
