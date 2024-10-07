@@ -3,12 +3,13 @@ import {createBrowserRouter, RouterProvider,} from 'react-router-dom';
 
 import './App.css';
 
-import Root from './routes/Root';
+import RootPage from './routes/RootPage';
 import ErrorPage from './routes/ErrorPage';
 import HomePage from './routes/HomePage';
-import LoginPage from './routes/LoginPage';
 import ContactPage from './routes/ContactPage';
+import LoginPage from './routes/LoginPage';
 import NotificationPage from './routes/NotificationPage';
+import RideListPage from './routes/RideListPage';
 
 // import { useAuth0 } from '@auth0/auth0-react';
 // TODO: Reimplement authentification (once Connor figures that all out lol) 
@@ -16,25 +17,35 @@ import NotificationPage from './routes/NotificationPage';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: <RootPage />,
     errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
-        element: <HomePage />,
+        errorElement: <ErrorPage />,
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+          },
+          {
+            path: "contact",
+            element: <ContactPage />,
+          },
+          {
+            path: "login",
+            element: <LoginPage />,
+          },
+          {
+            path: "notifications",
+            element: <NotificationPage />,
+          },
+          {
+            path: "ridelist",
+            element: <RideListPage />,
+          },
+        ],
       },
-      {
-        path: "contact",
-        element: <ContactPage />,
-      },
-      {
-        path: "login",
-        element: <LoginPage />,
-      },
-      {
-        path: "notifications",
-        element: <NotificationPage />,
-      },
+      
     ],
   },
 ])

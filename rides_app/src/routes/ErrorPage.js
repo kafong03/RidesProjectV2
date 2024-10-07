@@ -7,13 +7,15 @@ const ErrorPage = () => {
   console.error(error);
 
   return (
-    <>
-      <h1>{error.status}</h1>
+    <div className={'mainContainer'}>
+      <div className={'titleContainer'}>
+        Uh oh!
+      </div>
       <p>
-        <i>{error.statusText || error.message}</i>
+        <i>{error.status + ": " + (error.statusText || error.message)}</i>
       </p>
-      <p>how did you even get here lol</p>
-    </>
+      <sub>how did you even get here lol</sub>
+    </div>
   );
 };
 
