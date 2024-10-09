@@ -127,7 +127,7 @@ const AssignRidesPage = ({curEvent}) =>{
     //Create ref in the .map, pass in to the ag grid. Set the list item id to the driver id. Store the api in a list, will be rendered every time anyway and the driver id will keep track of the necessary stuff. We don't want to pair them bc the positions need to change
     key={driver._id}
     >
-    <div>
+    <div className='DriverHeader'>
         {driver.name} : {driver.seats} seats : {driver.address}
     </div>
     <AgGridReact 
@@ -177,7 +177,7 @@ const AssignRidesPage = ({curEvent}) =>{
     }
 
     const filterDrivers = () => {
-        StorageHandler.UpdateEvent(currentEvent);
+        StorageHandler.UpdateDriverToPassengerMap(currentEvent._id, currentEventMapping.current);
         gridApis.current = [];
 
         setDriverGrids([... masterDriverList.sort(driver => 4-driver._id).map(driver => {
@@ -186,34 +186,38 @@ const AssignRidesPage = ({curEvent}) =>{
     }
 
     return (
-    <div className='flexDiv'>
-        <div
-        className={"ag-theme-quartz" + ' ' + "DataDiv"} // applying the grid theme
-        >
-        <AgGridReact
-            ref={dataGridRef}
-            rowData={passengerList}
-            columnDefs={dataColDefs}
-            autoSizeStrategy={autoSizeStrategy}
-            rowDragManaged={true}
-            rowDragEntireRow={dragWholeRow}
-            suppressMoveWhenRowDragging={true}
-            getRowId={getRowId}
-            onGridReady={(params) => onGridReady(params)}
-        />
-        </div>
-        <div className="AssignDiv">
-                <ul className='AssignListItem'>
-                   {driverGrids} 
-                </ul>
-        </div>
-        <button onClick={updateDriverToPassengerMap}>
-            
-        </button>
-        
-        <button onClick={filterDrivers}>
-            
-        </button>
+        <div>
+            <div className='flexDiv'>
+                <div
+                    className={"ag-theme-quartz" + ' ' + "DataDiv"} // applying the grid theme
+                >
+                    <AgGridReact
+                        ref={dataGridRef}
+                        rowData={passengerList}
+                        columnDefs={dataColDefs}
+                        autoSizeStrategy={autoSizeStrategy}
+                        rowDragManaged={true}
+                        rowDragEntireRow={dragWholeRow}
+                        suppressMoveWhenRowDragging={true}
+                        getRowId={getRowId}
+                        onGridReady={(params) => onGridReady(params)}
+                    />
+                </div>
+                <div className="AssignDiv">
+                    <ul className='AssignListItem'>
+                        {driverGrids}
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <button onClick={updateDriverToPassengerMap}>
+                    save
+                </button>
+
+                <button onClick={filterDrivers}>
+                    filter
+                </button>
+            </div>
         </div>)
 };
 

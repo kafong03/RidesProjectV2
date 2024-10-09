@@ -3,6 +3,10 @@ import PassengerClass from "./PassengerClass";
 import EventClass from "./EventClass";
 
 class StorageHandler{
+    /* 
+    Will construct all the variables and establish connection but will
+    not fetch the drivers/passengers until necessary
+    */
     constructor(){
 
         var testDriverData1 = new DriverClass("1", "test1", "testAddress1", true, false, true, false, 3, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
