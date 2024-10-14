@@ -5,8 +5,8 @@ import AssignRidesPage from "./AssignRidesPage";
 /* <Link to="/AssignRides" className="btn btn-primary"> Assign Rides</Link> */
 const AdminPage = () => {
     const StorageHandler = useContext(StorageContext); 
-    const [currentComponents, setComponents] = useState(<div>Admin Page
-
+    const [currentComponents, setComponents] = useState(
+    <div>Admin Page
         <div>
             {StorageHandler.GetEvents().map(curEvent => {
                 return(
@@ -15,7 +15,8 @@ const AdminPage = () => {
                 </button>)
             })}
             
-        </div></div>)
+        </div>
+    </div>)
 
     const CreateAssignRidesComponent = (curEvent) =>{
         setComponents(<AssignRidesPage curEvent={curEvent}/>);

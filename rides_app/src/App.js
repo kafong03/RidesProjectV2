@@ -8,6 +8,7 @@ import {
   Route,
 } from "react-router-dom";
 import AdminPage from './Pages/AdminPage';
+import HomePage from './Pages/HomePage';
 
 function App() {
   const storageHandler = new StorageHandler();
@@ -16,10 +17,11 @@ function App() {
     <StorageContext.Provider value = {storageHandler}>
     <div className="App">
       <Router>
-      <Routes>
-        <Route path="/" element={<AdminPage/>}/>
-        <Route path="/AssignRides" element={<AssignRidesPage curEvent={ storageHandler.GetEvents()[0]}/>}/>
-      </Routes>
+        <Routes>
+          
+          <Route path="/" element={<HomePage/>}/>
+          <Route path="/AdminPage" element={<AdminPage/>}/>
+        </Routes>
       </Router>
       
     </div>
