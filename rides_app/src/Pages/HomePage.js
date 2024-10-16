@@ -1,4 +1,4 @@
-import BereanLogoPng from "../Resources/BereanLogo.passengerSetng"
+import BereanLogoPng from "../Resources/BereanLogo.png"
 
 const HomePage = () => {
     return (
