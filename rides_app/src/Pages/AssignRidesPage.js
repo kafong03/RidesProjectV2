@@ -11,6 +11,60 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+class FullWidthCellRenderer{
+    eGui;
+
+    init(params) {
+        const eTemp = document.createElement('div');
+        eTemp.innerHTML = this.getTemplate(params);
+        this.eGui = eTemp.firstElementChild ;
+    }
+
+    getTemplate(params){
+        const data = params.node.data;
+        // const service = data.first ? "First Service" : (data.second ? "Second Service" : "ThirdService")
+        // console.log(data);
+
+        var service;
+        if (data.first === "yes"){
+            service = "First Service";
+        }
+        else if (data.second === "yes"){
+            service = "Second Service";
+        }
+        else if (data.third === "yes"){
+            service = "Third Service";
+        }
+        else{
+            service = "No Sunday ride"
+        }
+
+        const template = 
+        `
+        <div class="FullWidthRow">
+        <div>${data.name}</div>
+        <ul>
+            <li> ${data.address} </li>
+            <li> ${data.location} </li>
+        </ul>
+        <div>
+            ${service}
+        </div>
+        </div>
+        `
+
+        return template;
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    refresh(params) {
+        return false;
+    }
+}
+
 const dragWholeRow = true;
 
 const AssignRidesPage = ({curEvent}) =>{
@@ -201,6 +255,9 @@ const AssignRidesPage = ({curEvent}) =>{
                         suppressMoveWhenRowDragging={true}
                         getRowId={getRowId}
                         onGridReady={(params) => onGridReady(params)}
+                        fullWidthCellRenderer={FullWidthCellRenderer}
+                        isFullWidthRow ={ () => { return true; }}
+                        rowHeight = {60}
                     />
                 </div>
                 <div className="AssignDiv">

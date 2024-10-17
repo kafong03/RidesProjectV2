@@ -18,9 +18,9 @@ class StorageHandler{
         var testDriverData7 = new DriverClass("7", "test7", "testAddress5", true, false, true, false, 4, "contact", new Map(), new Map(), new Set(), "note", new Map(), []);
         
         var testPassengerData1 = new PassengerClass("1", "testPassenger1", "testLocation", "testAddress1", true, false, true, false,"contact",  new Map(), new Set(), "", new Map(), []);
-        var testPassengerData2 = new PassengerClass("2", "testPassenger2", "testLocation", "testAddress2", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
-        var testPassengerData3 = new PassengerClass("3", "testPassenger3", "testLocation1", "testAddress3", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
-        var testPassengerData4 = new PassengerClass("4", "testPassenger4", "testLocation1", "testAddress4", true, false, true, false, "contact",  new Map(), new Set(), "", new Map(), []);
+        var testPassengerData2 = new PassengerClass("2", "testPassenger2", "testLocation", "testAddress2", true, true, false, false, "contact",  new Map(), new Set(), "", new Map(), []);
+        var testPassengerData3 = new PassengerClass("3", "testPassenger3", "testLocation1", "testAddress3", true, false, false, true, "contact",  new Map(), new Set(), "", new Map(), []);
+        var testPassengerData4 = new PassengerClass("4", "testPassenger4", "testLocation1", "testAddress4", true, false, false, false, "contact",  new Map(), new Set(), "", new Map(), []);
         
         var testEventMapping = new Map();
         testEventMapping.set(testDriverData1._id, new Set([testPassengerData3._id]));
