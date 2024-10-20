@@ -1,5 +1,5 @@
 // RootPage.js
-import { Outlet,Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import NavigationBar from "../components/NavigationBar";
 
 const RootPage = () => {
