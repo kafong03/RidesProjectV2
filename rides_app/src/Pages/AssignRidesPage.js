@@ -127,14 +127,36 @@ const AssignRidesPage = ({curEvent}) =>{
     }
 
     function getDropZoneParams(targetApi, sendingApi){
+        
         return targetApi.getRowDropZoneParams({
             onDragStop: (params) => {
-              const nodes = params.nodes;
-                sendingApi.applyTransaction({
-                  remove: nodes.map(function (node) {
-                    return node.data;
-                  }),
-                });
+                const nodes = params.nodes;
+                if (targetApi === dataGridApi.current){
+                    sendingApi.applyTransaction({
+                        remove: nodes.map(function (node) {
+                          return node.data;
+                        }),
+                      });
+                }
+                else{
+                    const targetGridPair = gridApis.current.find(gridPair => gridPair.second === targetApi)
+                    const driverId = targetGridPair.first
+                    const driver = masterDriverList.find(driver => driver._id === driverId)
+                    if (targetApi.getDisplayedRowCount() <= driver.seats){
+                        sendingApi.applyTransaction({
+                          remove: nodes.map(function (node) {
+                            return node.data;
+                          }),
+                        });
+                    }
+                    else {
+                        targetApi.applyTransaction({
+                            remove: nodes.map(function (node) {
+                              return node.data;
+                            }),
+                          });
+                    }
+                }
             },
           })
     }
