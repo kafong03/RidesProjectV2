@@ -1,7 +1,12 @@
 class EventClass{
-    static get SUNDAY () { return 0};
-    static get FRIDAY () { return 1};
-    static get OTHER () { return 2};
+    static get OTHER () { return 0};
+    static get SUNDAY () { return 1};
+    static get FRIDAY () { return 2};
+
+    static get EVENT_OPTIONS () { return [{ value: 0, label: 'Other' },
+                                          { value: 1, label: 'Sunday' },
+                                          { value: 2, label: 'Friday' },
+                                ]};
 
     constructor(id,  eventName, date, type, driverToPassengerMap = new Map()){
         this._id = id;

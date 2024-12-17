@@ -1,6 +1,7 @@
 import DriverClass from "./DriverClass";
 import PassengerClass from "./PassengerClass";
 import EventClass from "./EventClass";
+import { ObjectId } from 'bson';
 
 class StorageHandler{
     /* 
@@ -106,6 +107,15 @@ class StorageHandler{
             oldEvent.UpdateDriverToPassengerMap(newMapping);
             this.UpdateEvent(oldEvent);
         }
+    }
+
+    CreateEvent(eventName, eventDate, eventType){
+        const id  = new ObjectId();
+
+        var newEvent = new EventClass(id, eventName, eventDate, eventType);
+        this.testEventList.push(newEvent);
+
+        return newEvent;
     }
 }
 

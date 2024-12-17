@@ -9,6 +9,7 @@ import AdminPage from './Pages/AdminPage';
 import HomePage from './Pages/HomePage';
 import RootPage from './Pages/RootPage';
 import ErrorPage from './Pages/ErrorPage';
+import EventEditPage from './Pages/EventEditPage';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
           {
             path: "admin",
             element: <AdminPage />,
+          },
+          {
+            path: "EditEvent",
+            element: <EventEditPage />,
           },
         ],
       },
