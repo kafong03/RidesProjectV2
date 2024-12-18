@@ -1,12 +1,11 @@
 import {useLocation} from 'react-router-dom';
+import AssignRidesPage from "./AssignRidesPage";
 
 const EventEditPage = () =>{
     const { state } = useLocation();
     const curEvent = state
     return (
-        <div>
-            {curEvent.eventName}
-        </div>
+        <AssignRidesPage curEvent={state}/>
     )
 }
 

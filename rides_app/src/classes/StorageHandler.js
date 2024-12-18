@@ -37,8 +37,16 @@ class StorageHandler{
         return this.testPassengerList;
     }
 
+    GetPassengerById(passengerId){
+        return this.testPassengerList.find(passenger => passenger._id === passengerId);
+    }
+
     GetDrivers(){
         return this.testDriverList;
+    }
+
+    GetDriverById(driverId){
+        return this.testDriverList.find(driver => driver._id === driverId);
     }
 
     GetEvents(){

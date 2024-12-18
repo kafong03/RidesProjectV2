@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import EventClass from "../classes/EventClass";
 import { ObjectId } from 'bson';
 import { StorageContext } from "../Contexts";
-import AssignRidesPage from "./AssignRidesPage";
 import EventInput from "../components/EventInput";
 import EventList from "../components/EventList";
 /* <Link to="/AssignRides" className="btn btn-primary"> Assign Rides</Link> */

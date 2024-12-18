@@ -6,6 +6,7 @@ import {
   createBrowserRouter
 } from "react-router-dom";
 import AdminPage from './Pages/AdminPage';
+import DriverPage from './Pages/DriverPage';
 import HomePage from './Pages/HomePage';
 import RootPage from './Pages/RootPage';
 import ErrorPage from './Pages/ErrorPage';
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
           {
             path: "EditEvent",
             element: <EventEditPage />,
+          },
+          {
+            path: "driver",
+            element: <DriverPage />,
           },
         ],
       },
