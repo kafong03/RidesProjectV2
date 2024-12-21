@@ -4,8 +4,19 @@ import {React, useContext, useState} from "react";
 const DriverPage = () => {
     const StorageHandler = useContext(StorageContext); 
     const curDriver = StorageHandler.GetDriverById("1");
+
+
     const eventList = StorageHandler.GetEvents();
     const [displayedEvent, setDisplayedEvent] = useState(null)
+
+    
+    if (! curDriver){
+        return (
+            <div>
+                Error occured, no driver found
+            </div>
+        );
+    }
 
     const changeDisplayedEvent = (nextEvent) =>{
         const passengers = nextEvent.driverToPassenger.get(curDriver._id)
@@ -13,13 +24,19 @@ const DriverPage = () => {
         console.log(passengerData)
         if (passengers){
             setDisplayedEvent(
-                <div>
+                <ul>
                     {passengerData.map(passenger =>{
                         return(
-                            passenger.name
+                            <li>
+                                <div>{passenger.name}</div>
+                            <ul>
+                                <li> {passenger.address} </li>
+                                <li> {passenger.location} </li>
+                            </ul>
+                            </li>
                         )
                     })}
-                </div>
+                </ul>
             );
         }
     }

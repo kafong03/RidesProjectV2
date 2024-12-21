@@ -125,6 +125,24 @@ class StorageHandler{
 
         return newEvent;
     }
+
+    CreateDriver(name, address, sunday1st, sunday2nd, sunday3rd, contact){
+        const id  = new ObjectId();
+
+        var newDriver = new DriverClass(id, name, address, sunday1st, sunday2nd, sunday3rd, contact);
+        this.testDriverList.push(newDriver);
+
+        return newDriver;
+    }
+
+    CreatePassenger(name, location, address, sunday1st, sunday2nd, sunday3rd, contact){
+        const id  = new ObjectId();
+
+        var newPassenger = new PassengerClass(id, name, location, address, sunday1st, sunday2nd, sunday3rd, contact);
+        this.testPassengerList.push(newPassenger);
+
+        return newPassenger;
+    }
 }
 
 export default StorageHandler;

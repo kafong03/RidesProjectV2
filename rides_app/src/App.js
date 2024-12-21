@@ -11,6 +11,7 @@ import HomePage from './Pages/HomePage';
 import RootPage from './Pages/RootPage';
 import ErrorPage from './Pages/ErrorPage';
 import EventEditPage from './Pages/EventEditPage';
+import AddNewPeople from './Pages/AddNewPeoplePage';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
           {
             path: "driver",
             element: <DriverPage />,
+          },
+          {
+            path: "addPeople",
+            element: <AddNewPeople />,
           },
         ],
       },

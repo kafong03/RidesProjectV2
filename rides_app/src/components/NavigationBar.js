@@ -14,10 +14,16 @@ const NavigationBar = () => {
         Berean Rides
       </Link>
       <ul>
-        {true ?
+        {true ? //Replace true with auth0
         <>
           <li>
             <Link to="/admin">Admin</Link>
+          </li>
+          <li>
+            <Link to="/addPeople">Add People</Link>
+          </li>
+          <li>
+            <Link to="/driver">Driver</Link>
           </li>
         </> :
         <li>
