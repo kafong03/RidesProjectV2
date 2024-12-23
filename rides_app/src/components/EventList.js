@@ -6,8 +6,8 @@ const EventList = ({eventsToDisplay}) =>{
         eventsToDisplay.map(curEvent => {
             return(
             
-            <Link to={ "/EditEvent" } state = {curEvent} >
-                <button  key={curEvent._id}>
+            <Link to={ "/EditEvent" } state = {curEvent} key={curEvent._id} >
+                <button>
                     {curEvent.eventName}
                 </button>
             </Link>

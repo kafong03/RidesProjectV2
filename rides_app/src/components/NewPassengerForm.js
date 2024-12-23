@@ -5,11 +5,7 @@ import { StorageContext } from "../Contexts";
 const NewPassengerForm = (getInfoFun) => {
     const [inputs, setInputs] = useState({});
     const StorageHandler = useContext(StorageContext); 
-    // const [friday, setFriday] = useState(false);
     const [component, setComponent] = useState(<div>Enter a passenger</div>);
-    // const fridayChanged = () => {
-    //     setFriday(val => !val);
-    // }
     const getCheckedFunction = (list) => {
         console.log(list);
     }
@@ -48,7 +44,6 @@ const NewPassengerForm = (getInfoFun) => {
       }
     
 
-      //id, passengerName, address, friday, sunday1st, sunday2nd, sunday3rd, seats, assigned, unavailable, contact, labels, cars
     return (
         <div>
             <h1>New Passenger</h1>
