@@ -27,7 +27,7 @@ class DriverClass{
         this.sunday2nd = json.sunday2nd;
         this.sunday3rd = json.sunday3rd;
         this.seats = json.seats;
-        this.unavailable = new Set(json.unavailable);
+        this.unavailable = new Set(json.unavailable); 
         this.contact = json.contact;
         this.note = json.note;
         this.labels = json.labels;
@@ -38,7 +38,7 @@ class DriverClass{
                             address: this.address, friday: this.friday, 
                             sunday1st: this.sunday1st, sunday2nd: this.sunday2nd, 
                             sunday3rd: this.sunday3rd, seats: this.seats, 
-                            unavailable: Array.from(this.unavailable), 
+                            unavailable: [... this.unavailable].map(date => date.toIsoString()), //Convert dates to string
                             contact: this.contact, note: this.note, labels: this.labels
                         };
 

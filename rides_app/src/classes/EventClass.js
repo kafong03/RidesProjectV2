@@ -1,3 +1,11 @@
+function ConvertSetsInMap(curMap){
+    var newMap = new Map();
+    for (let [key, value] of curMap) {
+        newMap.set(key, [... value]);
+    }
+    return newMap
+}
+
 class EventClass{
     static get OTHER () { return 0};
     static get SUNDAY () { return 1};
@@ -34,8 +42,8 @@ class EventClass{
     }
 
     toJSON(){
-        var EventObject = {_id: this._id, eventName: this.eventName, date: this.date, 
-                            type: this.type, driverToPassenger: Object.fromEntries(this.driverToPassenger)};
+        var EventObject = {_id: this._id, eventName: this.eventName, date: this.date.toISOString(), 
+                            type: this.type, driverToPassenger: Object.fromEntries(ConvertSetsInMap(this.driverToPassenger))};
 
         return EventObject;
     }

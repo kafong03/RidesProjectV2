@@ -70,6 +70,7 @@ const dragWholeRow = true;
 
 const AssignRidesPageComponent = ({curEvent}) =>{
     const currentEvent = curEvent;
+
     const currentEventMapping = useRef(new Map(curEvent.driverToPassenger)); //Make sure to use ref
 
     const StorageHandler = useContext(StorageContext); 

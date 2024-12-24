@@ -36,6 +36,7 @@ const DriverPageComponent = () => {
     }
     const curDriver = StorageHandler.GetDriverById(curAccount.accountId);
 
+
     if (!curDriver){
         return (
             <div>
@@ -48,7 +49,6 @@ const DriverPageComponent = () => {
     const changeDisplayedEvent = (nextEvent) =>{
         const passengers = nextEvent.driverToPassenger.get(curDriver._id)
         const passengerData = [... passengers].map(passengerId => StorageHandler.GetPassengerById(passengerId))
-        console.log(passengerData)
         if (passengers){
             setDisplayedEvent(
                 <ul>
