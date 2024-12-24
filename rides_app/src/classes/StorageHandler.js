@@ -2,6 +2,7 @@ import DriverClass from "./DriverClass";
 import PassengerClass from "./PassengerClass";
 import EventClass from "./EventClass";
 import { ObjectId } from 'bson';
+import AccountClass from "./AccountClass";
 
 class StorageHandler{
     /* 
@@ -31,6 +32,9 @@ class StorageHandler{
         this.testDriverList = [testDriverData1, testDriverData2, testDriverData3, testDriverData4, testDriverData5, testDriverData6, testDriverData7];
         this.testPassengerList = [testPassengerData1, testPassengerData2, testPassengerData3, testPassengerData4];
         this.testEventList = [testEvent];
+
+        this.curAccount = new AccountClass("1", "email", "1", "driver");
+        this.curAdmin = new AccountClass("2", "", "-1", "admin");
     };
 
     GetPassengers(){
@@ -126,10 +130,10 @@ class StorageHandler{
         return newEvent;
     }
 
-    CreateDriver(name, address, sunday1st, sunday2nd, sunday3rd, contact){
+    CreateDriver(name, address, sunday1st, sunday2nd, sunday3rd, seats, contact){
         const id  = new ObjectId();
 
-        var newDriver = new DriverClass(id, name, address, sunday1st, sunday2nd, sunday3rd, contact);
+        var newDriver = new DriverClass(id, name, address, sunday1st, sunday2nd, sunday3rd, seats, contact);
         this.testDriverList.push(newDriver);
 
         return newDriver;
@@ -142,6 +146,20 @@ class StorageHandler{
         this.testPassengerList.push(newPassenger);
 
         return newPassenger;
+    }
+
+    GetAccount(email){
+        return this.curAccount;
+    }
+
+    GetDriverAccount(email){
+        if (this.curAccount){
+            return this.curAccount;
+        }
+        else{
+            //this.curAccount = GetAccount(email);
+            return this.curAccount;
+        }
     }
 }
 

@@ -1,8 +1,9 @@
 class AccountClass{
-    constructor(id, name, accountId){
+    constructor(id, email, accountId, accountType){
         this._id = id;
-        this.auth0Name = name;
+        this.auth0Email = email;
         this.accountId = accountId;
+        this.accountType = accountType;
     }   
 }
 
