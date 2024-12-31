@@ -6,14 +6,22 @@ function ConvertSetsInMap(curMap){
     return newMap
 }
 
+function ConvertArraysInMap(curMap){
+    var newMap = new Map();
+    for (let [key, value] of curMap) {
+        newMap.set(key, new Set(value));
+    }
+    return newMap
+}
+
 class EventClass{
     static get OTHER () { return 0};
     static get SUNDAY () { return 1};
     static get FRIDAY () { return 2};
 
-    static get EVENT_OPTIONS () { return [{ value: 0, label: 'Other' },
-                                          { value: 1, label: 'Sunday' },
-                                          { value: 2, label: 'Friday' },
+    static get EVENT_OPTIONS () { return [{ value: EventClass.OTHER, label: 'Other' },
+                                          { value: EventClass.SUNDAY, label: 'Sunday' },
+                                          { value: EventClass.FRIDAY, label: 'Friday' },
                                 ]};
 
     constructor(id,  eventName, date, type, driverToPassengerMap = new Map()){
@@ -38,7 +46,7 @@ class EventClass{
         this.eventName = json.eventName;
         this.date = json.date;
         this.type = json.type;
-        this.driverToPassenger = new Map(Object.entries(json.driverToPassenger));
+        this.driverToPassenger = ConvertArraysInMap(new Map(Object.entries(json.driverToPassenger)));
     }
 
     toJSON(){

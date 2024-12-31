@@ -34,10 +34,11 @@ class PassengerClass{
         var PassengerObject = {_id: this._id, name: this.name, location: this.location,
                             address: this.address, friday: this.friday, 
                             sunday1st: this.sunday1st, sunday2nd: this.sunday2nd, 
-                            sunday3rd: this.sunday3rd, seats: this.seats, 
+                            sunday3rd: this.sunday3rd,
                             flagged: Array.from(this.flagged), 
                             contact: this.contact, notes: this.notes, labels: this.labels
                         };
+        console.log(PassengerObject);
 
         return PassengerObject;
     }

@@ -13,6 +13,28 @@ const AdminPage = () => {
         isAuthenticated
     } = useAuth0();
     
+    
+    // useEffect(() => {
+
+    // }, [])
+
+    // const initializePage = async () => {
+        
+    //     try{
+    //         StorageHandler.GetEvents()
+    //             .then(response => response.json())
+    //             .then(json => {
+    //                 return (json.map(curEvent => {
+    //                     const newEvent = new EventClass();
+    //                     newEvent.FromJSON(curEvent);
+    //                     return newEvent;
+    //                 }))
+    //             }).catch(error => (<h1>Could not retrieve events, please refresh</h1>));
+    //     }
+    //     catch{
+    //         return (<h1>Could not retrieve events, please refresh</h1>)
+    //     }
+    // };
 
     if (isAuthenticated){
         return(<AdminPageComponent/>);

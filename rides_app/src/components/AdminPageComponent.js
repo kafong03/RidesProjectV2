@@ -1,4 +1,4 @@
-import {React, useContext, useState} from "react";
+import {React, useContext, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import EventClass from "../classes/EventClass";
 import { ObjectId } from 'bson';
@@ -15,7 +15,16 @@ const AdminPageComponent = () => {
 
     const StorageHandler = useContext(StorageContext); 
 
-    const [curEvents, setEvents] = useState(StorageHandler.GetEvents())
+
+    useEffect(() => {
+        if (isAuthenticated){
+            initializePage();
+        }
+            
+    }, [isAuthenticated])
+
+    const [curEvents, setEvents] = useState(StorageHandler.GetEvents());
+    const [isLoaded, setLoaded] = useState(false);
 
     if (! isAuthenticated){
         <div>Please login before viewing this page</div>
@@ -46,6 +55,30 @@ const AdminPageComponent = () => {
         );
     }
 
+    const initializePage = async () => {
+        
+        try{
+            const response = await StorageHandler.GetEvents()
+                .then(response => response.json())
+                .then(json => {
+                    return (json.map(curEvent => {
+                        const newEvent = new EventClass();
+                        newEvent.FromJSON(curEvent);
+                        return newEvent;
+                    }))
+                });
+            setEvents(response);
+            setLoaded(true);    
+        }
+        catch{
+            return (<h1>Could not retrieve events, please refresh</h1>)
+        }
+    };
+
+    if (!isLoaded){
+        return(<h1>Loading</h1>)
+    }
+
     const NewEvent = (eventName, eventDate, eventType) => {
         if (! eventName){
             alert("Please enter the name of the event");
@@ -56,11 +89,6 @@ const AdminPageComponent = () => {
         setEvents(curEvents => [... curEvents, newEvent]);
         //setComponents(startComponents);
     }
-
-
-    if (false){
-        return (<div>Login first</div>)
-    } //not authorized
 
     return (
         <div> Admin Page

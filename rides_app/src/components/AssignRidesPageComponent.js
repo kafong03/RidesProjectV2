@@ -9,6 +9,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import "../CSS/AssignPage.css";
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+import { useNavigate } from 'react-router-dom';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -70,6 +71,7 @@ const dragWholeRow = true;
 
 const AssignRidesPageComponent = ({curEvent}) =>{
     const currentEvent = curEvent;
+    const navigate = useNavigate();
 
     const currentEventMapping = useRef(new Map(curEvent.driverToPassenger)); //Make sure to use ref
 
@@ -296,6 +298,10 @@ const AssignRidesPageComponent = ({curEvent}) =>{
                 This is not an admin account
             </div>
         );
+    }
+
+    if (!currentEvent){
+        navigate("/admin")
     }
 
     return (
