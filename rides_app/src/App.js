@@ -14,6 +14,7 @@ import EventEditPage from './Pages/EventEditPage';
 import AddNewPeople from './Pages/AddNewPeoplePage';
 import DriverProfilePage from './Pages/DriverProfilePage';
 import LoginPage from './Pages/LoginPage';
+import { useEffect } from 'react';
 
 const router = createBrowserRouter([
   {

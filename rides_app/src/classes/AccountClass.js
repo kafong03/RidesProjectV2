@@ -7,7 +7,6 @@ class AccountClass{
     }   
 
     FromJSON(json){
-        console.log(json)
         this._id = json._id;
         this.auth0Email = json.auth0Email;
         this.accountId = json.accountId;

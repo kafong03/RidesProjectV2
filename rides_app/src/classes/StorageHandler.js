@@ -75,7 +75,7 @@ class StorageHandler{
 
     async GetDriverById(driverId, isDriverAccount, retrieveNew){
         if (isDriverAccount){
-            return await fetch(this.fetchURL + "passenger/" + driverId); 
+            return await fetch(this.fetchURL + "driver/" + driverId); 
         }
         else if (!retrieveNew && this.curDriverList){
             return this.curDriverList.find(driver => driver._id === driverId);
@@ -87,12 +87,17 @@ class StorageHandler{
     }
 
     async GetEvents(retrieveNew){
-        if (!retrieveNew && this.curEventList){
+        if (!retrieveNew && this.curEventList.length > 0){
             return this.curEventList;
         }
 
-        this.curEventList = await fetch(this.fetchURL + "passenger");
-        await fetch(this.fetchURL + "events")
+        const eventRequest = await fetch(this.fetchURL + "events");
+        const eventJson = (await eventRequest.json());
+        this.curEventList = eventJson.map(curEvent => {
+            const newEvent = new EventClass();
+            newEvent.FromJSON(curEvent);
+            return newEvent;
+        });
         return this.curEventList;
     }
 

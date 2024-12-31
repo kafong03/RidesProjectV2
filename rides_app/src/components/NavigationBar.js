@@ -14,7 +14,6 @@ const NavigationBar = () => {
     isAuthenticated
   } = useAuth0();
 
-  const load = true;
 
   const initialize = async () => {
     try{
@@ -22,21 +21,22 @@ const NavigationBar = () => {
       //   console.log(response)
       //   setAccount(response);
       //   setComponents(pagecomponents(response));   
-      StorageHandler.GetAccount(user.email).then(response => {
+      await StorageHandler.GetAccount(user.email).then(response => {
         setComponents(pagecomponents(response));
       });
-      console.log("loading")
 
     }
     catch{
-        return (<h1>Could not retrieve events, please refresh</h1>)
+      setComponents (<h1>Could not retrieve events, please refresh</h1>)
     }
 };
 
   useEffect(() => {
-    initialize();
+    if(user){
+      initialize();
+    }
             
-    }, [])
+    }, [user])
 
   const [pageComponents, setComponents] = useState(<h1>Loading</h1>);
   const StorageHandler = useContext(StorageContext);

@@ -13,17 +13,31 @@ const AdminPageComponent = () => {
         isAuthenticated
     } = useAuth0();
 
+    const initializePage = async () => {
+        try{
+            const account = await StorageHandler.GetAccount(user.email);
+            setAccount(account);
+            const response = await StorageHandler.GetEvents(false);
+            setEvents(response);
+            setLoaded(true);      
+        }
+        catch{
+            return (<h1>Could not retrieve events, please refresh</h1>)
+        }
+    };
+
     const StorageHandler = useContext(StorageContext); 
+    const [curAccount, setAccount] = useState(null);
 
 
     useEffect(() => {
-        if (isAuthenticated){
+        if (user){
             initializePage();
         }
             
-    }, [isAuthenticated])
+    }, [user])
 
-    const [curEvents, setEvents] = useState(StorageHandler.GetEvents());
+    const [curEvents, setEvents] = useState([]);
     const [isLoaded, setLoaded] = useState(false);
 
     if (! isAuthenticated){
@@ -38,11 +52,10 @@ const AdminPageComponent = () => {
         )
     }
 
-    const curAccount = StorageHandler.GetAccount(user.name)
     if (! curAccount){
         return (
             <div>
-                Error, no account found
+                Loading or no account found
             </div>
         );
     }
@@ -54,26 +67,6 @@ const AdminPageComponent = () => {
             </div>
         );
     }
-
-    const initializePage = async () => {
-        
-        try{
-            const response = await StorageHandler.GetEvents()
-                .then(response => response.json())
-                .then(json => {
-                    return (json.map(curEvent => {
-                        const newEvent = new EventClass();
-                        newEvent.FromJSON(curEvent);
-                        return newEvent;
-                    }))
-                });
-            setEvents(response);
-            setLoaded(true);    
-        }
-        catch{
-            return (<h1>Could not retrieve events, please refresh</h1>)
-        }
-    };
 
     if (!isLoaded){
         return(<h1>Loading</h1>)
