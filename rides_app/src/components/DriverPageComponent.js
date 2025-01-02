@@ -1,5 +1,5 @@
 import { StorageContext } from "../Contexts";
-import {React, useContext, useState} from "react";
+import {React, useContext, useEffect, useState} from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const DriverPageComponent = () => {
@@ -10,14 +10,47 @@ const DriverPageComponent = () => {
 
 
     const StorageHandler = useContext(StorageContext);
-    const eventList = StorageHandler.GetEvents();
     const [displayedEvent, setDisplayedEvent] = useState(null)
+    const [curAccount, setAccount] = useState(null);
+    const [curDriver, setDriver] = useState(null);
+    const [eventList, setEvents] = useState([]);
+    const [isLoaded, setLoaded] = useState(false);
+
+    const initializePage = async () => {
+        const account = await StorageHandler.GetAccount(user.email);
+        setAccount(account);
+        const response = await StorageHandler.GetEvents(false);
+        setEvents(response);
+        const driver = await StorageHandler.GetDriverById(account.accountId, true, false);
+        setDriver(driver);
+        setLoaded(true);   
+        // try{
+        //     const account = await StorageHandler.GetAccount(user.email);
+        //     setAccount(account);
+        //     const response = await StorageHandler.GetEvents(false);
+        //     setEvents(response);
+        //     const driver = await StorageHandler.GetDriverById(account.accountId, true, false);
+        //     setLoaded(true);      
+        // }
+        // catch{
+        //     return (<h1>Could not retrieve driver, please refresh</h1>)
+        // }
+    };
+
+    useEffect(() => {
+        if (user){
+            initializePage();
+        }
+            
+    }, [user])
     
     if (! isAuthenticated){
         <div>Please login before viewing this page</div>
     }
 
-    const curAccount = StorageHandler.GetAccount(user.email); 
+    if (! isLoaded){
+        return (<h1>Loading</h1>)
+    }
     
     if (! curAccount){
         return (
@@ -34,7 +67,6 @@ const DriverPageComponent = () => {
             </div>
         );
     }
-    const curDriver = StorageHandler.GetDriverById(curAccount.accountId);
 
 
     if (!curDriver){
@@ -46,15 +78,22 @@ const DriverPageComponent = () => {
     }
 
 
-    const changeDisplayedEvent = (nextEvent) =>{
+    const changeDisplayedEvent = async (nextEvent) =>{
         const passengers = nextEvent.driverToPassenger.get(curDriver._id)
-        const passengerData = [... passengers].map(passengerId => StorageHandler.GetPassengerById(passengerId))
+        if (! passengers){
+            setDisplayedEvent( <h1>No passengers to drive for this event</h1>)
+            return;
+        }
+        const passengerData = await Promise.all([... passengers].map(async (passengerId) => { 
+            //try catch
+            return await StorageHandler.GetPassengerById(passengerId)})
+        )
         if (passengers){
             setDisplayedEvent(
                 <ul>
                     {passengerData.map(passenger =>{
                         return(
-                            <li>
+                            <li key={passenger._id}>
                                 <div>{passenger.name}</div>
                             <ul>
                                 <li> {passenger.address} </li>

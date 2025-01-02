@@ -88,7 +88,11 @@ class StorageHandler{
 
     async GetDriverById(driverId, isDriverAccount, retrieveNew){
         if (isDriverAccount){
-            return await fetch(this.fetchURL + "driver/" + driverId); 
+            const response = await fetch(this.fetchURL + "driver/" + driverId); 
+            const driverJson = (await response.json());
+            const newDriver= new DriverClass();
+            newDriver.FromJSON(driverJson[0]);
+            return newDriver;
         }
         else if (!retrieveNew && this.curDriverList.length > 0){
             return this.curDriverList.find(driver => driver._id === driverId);
@@ -139,7 +143,6 @@ class StorageHandler{
         //     sameMapping = false;
         // }
 
-        console.log(JSON.stringify(updatedEvent.toJSON()));
         return await fetch(this.fetchURL + "events/" + updatedEvent._id, {
             method: "PUT",
             headers: { 'Content-Type': 'application/json' },
@@ -247,7 +250,6 @@ class StorageHandler{
 
     async CreateDriverAccount(email, driverId){
         const id  = new ObjectId();
-        console.log(driverId);
         const newAccount = new AccountClass(id, email, driverId, "driver");
 
         fetch(this.fetchURL + "accounts", {
