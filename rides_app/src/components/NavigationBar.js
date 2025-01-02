@@ -16,29 +16,38 @@ const NavigationBar = () => {
 
 
   const initialize = async () => {
-    try{
-      // const response = await StorageHandler.GetAccount(user.email);
-      //   console.log(response)
-      //   setAccount(response);
-      //   setComponents(pagecomponents(response));   
       await StorageHandler.GetAccount(user.email).then(response => {
         setComponents(pagecomponents(response));
       });
+    
+    // try{
+    //   // const response = await StorageHandler.GetAccount(user.email);
+    //   //   console.log(response)
+    //   //   setAccount(response);
+    //   //   setComponents(pagecomponents(response));   
+    //   await StorageHandler.GetAccount(user.email).then(response => {
+    //     setComponents(pagecomponents(response));
+    //   });
 
-    }
-    catch{
-      setComponents (<h1>Could not retrieve events, please refresh</h1>)
-    }
+    // }
+    // catch{
+    //   setComponents (<h1>Could not retrieve events, please refresh</h1>)
+    // }
 };
 
   useEffect(() => {
-    if(user){
+    if(user && isAuthenticated){
       initialize();
     }
             
     }, [user])
 
-  const [pageComponents, setComponents] = useState(<h1>Loading</h1>);
+  const [pageComponents, setComponents] = useState(
+    <ul>
+    <li>
+      <Link to="/login">Login</Link>
+    </li>
+    </ul>);
   const StorageHandler = useContext(StorageContext);
   const [curAccount, setAccount] = useState(null);
 
@@ -53,13 +62,8 @@ const NavigationBar = () => {
     //     );
     // }
 
-    const pagecomponents = (curAccount) => { return( <nav className={'navigation'}>
-    <Link to="/" className="site-title">
-      <img id ="bereanLogo" src={BereanLogoPng} alt="" className="site-title"/>
-      Berean Rides
-    </Link>
+    const pagecomponents = (curAccount) => { return( 
     <ul>
-      {isAuthenticated ?
       <>
         {curAccount.accountType === "admin" ? 
         <><li>
@@ -79,18 +83,17 @@ const NavigationBar = () => {
           <Link to="/profile">Profile</Link>
         </li>
         </>: ""}
-      </> :
-      <li>
-        <Link to="/login">Login</Link>
-      </li>
-      }
-    </ul>
-  </nav>)};
+      </> 
+    </ul>)};
 
   return (
-    <div>
+    <nav className={'navigation'}>
+    <Link to="/" className="site-title">
+      <img id ="bereanLogo" src={BereanLogoPng} alt="" className="site-title"/>
+      Berean Rides
+    </Link>
       {pageComponents}
-    </div>
+    </nav>
   )
 };
 

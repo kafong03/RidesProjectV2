@@ -46,16 +46,22 @@ class StorageHandler{
     };
 
     async GetPassengers(retrieveNew){
-        if (!retrieveNew && this.curPassengerList){
+        if (!retrieveNew && this.curPassengerList.length > 0){
             return this.curPassengerList;
         }
 
-        this.curPassengerList = await fetch(this.fetchURL + "passenger");
+        const response = await fetch(this.fetchURL + "passenger");
+        const passengerJson = (await response.json());
+        this.curPassengerList = passengerJson.map(curPassenger => {
+            const newPassenger= new PassengerClass();
+            newPassenger.FromJSON(curPassenger);
+            return newPassenger;
+        });
         return this.curPassengerList;
     }
 
     async GetPassengerById(passengerId, retrieveNew){
-        if (!retrieveNew && this.curPassengerList){
+        if (!retrieveNew && this.curPassengerList.length > 0){
             return this.curPassengerList.find(passenger => passenger._id === passengerId);
         }
 
@@ -65,11 +71,18 @@ class StorageHandler{
     }
 
     async GetDrivers(retrieveNew){
-        if (!retrieveNew && this.curDriverList){
+        if (!retrieveNew && this.curDriverList.length > 0){
             return this.curDriverList;
         }
 
-        this.curDriverList = await fetch(this.fetchURL + "passenger");
+        const response = await fetch(this.fetchURL + "driver");
+        const driverJson = (await response.json());
+        this.curDriverList = driverJson.map(curDriver => {
+            const newDriver= new DriverClass();
+            newDriver.FromJSON(curDriver);
+            return newDriver;
+        });
+
         return this.curDriverList;
     }
 
@@ -77,7 +90,7 @@ class StorageHandler{
         if (isDriverAccount){
             return await fetch(this.fetchURL + "driver/" + driverId); 
         }
-        else if (!retrieveNew && this.curDriverList){
+        else if (!retrieveNew && this.curDriverList.length > 0){
             return this.curDriverList.find(driver => driver._id === driverId);
         }
         
@@ -129,6 +142,7 @@ class StorageHandler{
         console.log(updatedEvent);
         return await fetch(this.fetchURL + "events/" + updatedEvent._id, {
             method: "PUT",
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedEvent.toJSON())
         });
         // if(! sameMapping){
@@ -204,7 +218,6 @@ class StorageHandler{
 
         var newPassenger = new PassengerClass(id, name, location, address, friday, sunday1st, sunday2nd, sunday3rd, contact);
         this.curPassengerList.push(newPassenger);
-        console.log(JSON.stringify(newPassenger.toJSON()));
         fetch(this.fetchURL + "passenger", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
@@ -230,6 +243,17 @@ class StorageHandler{
         else{
             return this.curAccount;
         }
+    }
+
+    async CreateDriverAccount(email, driverId){
+        const id  = new ObjectId();
+        const newAccount = new AccountClass(id, email, driverId, "driver");
+
+        fetch(this.fetchURL + "account", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newAccount)
+        })
     }
 
     async GetDriverAccount(email){

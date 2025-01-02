@@ -78,7 +78,7 @@ const AssignRidesPageComponent = ({curEvent}) =>{
     const StorageHandler = useContext(StorageContext); 
 
     // Use memo or ref to prevent rerender, may not be necessary
-    var masterDriverList = useMemo(() => StorageHandler.GetDrivers(), [masterDriverList]);
+    const [masterDriverList, setMasterDriverList] = useState(null);
 
     var assignedPassengers = useMemo(() => new Set(), [assignedPassengers]);
 
@@ -87,8 +87,8 @@ const AssignRidesPageComponent = ({curEvent}) =>{
     };
     const dataGridRef = useRef(null);
 
-    var masterPassengerList = useMemo(() => StorageHandler.GetPassengers(), masterPassengerList);
-    const [passengerList, setPassengerList] = useState([]);
+    const [masterPassengerList, setMasterPassengerList] = useState([]);
+    const [passengerList, setPassengerList] = useState(null);
 
     var dataGridApi = useRef(null);
 
@@ -270,6 +270,37 @@ const AssignRidesPageComponent = ({curEvent}) =>{
         isAuthenticated
     } = useAuth0();
 
+    useEffect(() => {
+        if (user){
+            initializePage();
+        }
+            
+    }, [user])
+
+    const initializePage = async () => {
+        const account = await StorageHandler.GetAccount(user.email);
+            setAccount(account);
+            const drivers = await StorageHandler.GetDrivers(false);
+            const passengers = await StorageHandler.GetPassengers(false);
+            setMasterDriverList(drivers);
+            setMasterPassengerList(passengers);
+            setLoaded(true);  
+        // try{
+        //     const account = await StorageHandler.GetAccount(user.email);
+        //     setAccount(account);
+        //     const drivers = await StorageHandler.GetDrivers();
+        //     const passengers = await StorageHandler.GetPassengers();
+        //     setMasterDriverList(drivers);
+        //     setMasterPassengerList(passengers);
+        //     setLoaded(true);      
+        // }
+        // catch{
+        //     return (<h1>Could not retrieve events, please refresh</h1>)
+        // }
+    };
+    const [curAccount, setAccount] = useState(null);
+    const [isLoaded, setLoaded] = useState(false);
+
     if (! isAuthenticated){
         <div>Please login before viewing this page</div>
     }
@@ -282,8 +313,10 @@ const AssignRidesPageComponent = ({curEvent}) =>{
         )
     }
 
+    if (!isLoaded){
+        return(<h1>Loading</h1>)
+    }
 
-    const curAccount = StorageHandler.GetAccount(user.name)
     if (! curAccount){
         return (
             <div>

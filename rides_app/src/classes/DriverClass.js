@@ -27,7 +27,7 @@ class DriverClass{
         this.sunday2nd = json.sunday2nd;
         this.sunday3rd = json.sunday3rd;
         this.seats = json.seats;
-        this.unavailable = new Set(Array.from(Object.entriesjson.unavailable).map(curDate => new Date(curDate))); 
+        this.unavailable = new Set(Array.from(Object.entries(json.unavailable)).map(curDate => new Date(curDate))); 
         this.contact = json.contact;
         this.note = json.note;
         this.labels = json.labels;
