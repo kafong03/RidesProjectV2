@@ -17,10 +17,11 @@ const NewDriverForm = (getInfoFun) => {
         setInputs(values => ({...values, [name]: value}))
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const newDriver = StorageHandler.CreateDriver(inputs.driverName, inputs.address, inputs.friday != null, 
+        const newDriver = await StorageHandler.CreateDriver(inputs.driverName, inputs.address, inputs.friday != null, 
                                                         inputs.first != null, inputs.second != null, inputs.third != null, parseInt(inputs.seats), inputs.contact);
+        StorageHandler.CreateDriverAccount(inputs.email, newDriver._id);
         // var newDriver = new DriverClass(StorageHandler.NextDriverId(), inputs.driverName, inputs.address, inputs.friday != null,
         //     inputs.first != null, inputs.second != null, inputs.third != null,  parseInt(inputs.seats), new Map(), new Set(), inputs.contact, [], new Map());
         // StorageHandler.AddDriver(newDriver);
@@ -80,6 +81,18 @@ const NewDriverForm = (getInfoFun) => {
                 type="text" 
                 name="contact" 
                 value={inputs.contact || ""} 
+                onChange={handleChange}
+            />
+            </label>
+            <br/>
+
+            <label>Enter the driver's email:
+            <input 
+                required 
+                className="textInputContainer"
+                type="text" 
+                name="email" 
+                value={inputs.email || ""} 
                 onChange={handleChange}
             />
             </label>

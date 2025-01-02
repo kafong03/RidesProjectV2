@@ -139,7 +139,7 @@ class StorageHandler{
         //     sameMapping = false;
         // }
 
-        console.log(updatedEvent);
+        console.log(JSON.stringify(updatedEvent.toJSON()));
         return await fetch(this.fetchURL + "events/" + updatedEvent._id, {
             method: "PUT",
             headers: { 'Content-Type': 'application/json' },
@@ -247,9 +247,10 @@ class StorageHandler{
 
     async CreateDriverAccount(email, driverId){
         const id  = new ObjectId();
+        console.log(driverId);
         const newAccount = new AccountClass(id, email, driverId, "driver");
 
-        fetch(this.fetchURL + "account", {
+        fetch(this.fetchURL + "accounts", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newAccount)
