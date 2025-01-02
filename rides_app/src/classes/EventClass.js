@@ -44,12 +44,13 @@ class EventClass{
     FromJSON(json) {
         this._id = json._id;
         this.eventName = json.eventName;
-        this.date = json.date;
+        this.date = new Date(json.date);
         this.type = json.type;
         this.driverToPassenger = ConvertArraysInMap(new Map(Object.entries(json.driverToPassenger)));
     }
 
     toJSON(){
+        console.log(this.date);
         var EventObject = {_id: this._id, eventName: this.eventName, date: this.date.toISOString(), 
                             type: this.type, driverToPassenger: Object.fromEntries(ConvertSetsInMap(this.driverToPassenger))};
 

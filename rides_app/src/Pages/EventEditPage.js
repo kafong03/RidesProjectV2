@@ -1,16 +1,15 @@
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import AssignRidesPage from "./AssignRidesPage";
 
 const EventEditPage = () =>{
-    const { state } = useLocation();
+    const { state } = useLocation();    
+    const navigate = useNavigate();
+    
     const curEvent = state
 
     if (! state){
-        return (
-            <div>
-                Error occured, no event selected
-            </div>
-        )
+        // navigate("/admin");
+        return <h1>No event selected</h1>
     }
 
     return (

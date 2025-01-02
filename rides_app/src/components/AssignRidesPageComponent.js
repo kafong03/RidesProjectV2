@@ -274,29 +274,31 @@ const AssignRidesPageComponent = ({curEvent}) =>{
         if (user){
             initializePage();
         }
+
+        window.onbeforeunload = function() {
+            navigate("/admin")
+            return true;
+        };
+    
+        return () => {
+            window.onbeforeunload = null;
+        };
             
     }, [user])
 
     const initializePage = async () => {
-        const account = await StorageHandler.GetAccount(user.email);
+        try{
+            const account = await StorageHandler.GetAccount(user.email);
             setAccount(account);
-            const drivers = await StorageHandler.GetDrivers(false);
-            const passengers = await StorageHandler.GetPassengers(false);
+            const drivers = await StorageHandler.GetDrivers();
+            const passengers = await StorageHandler.GetPassengers();
             setMasterDriverList(drivers);
             setMasterPassengerList(passengers);
-            setLoaded(true);  
-        // try{
-        //     const account = await StorageHandler.GetAccount(user.email);
-        //     setAccount(account);
-        //     const drivers = await StorageHandler.GetDrivers();
-        //     const passengers = await StorageHandler.GetPassengers();
-        //     setMasterDriverList(drivers);
-        //     setMasterPassengerList(passengers);
-        //     setLoaded(true);      
-        // }
-        // catch{
-        //     return (<h1>Could not retrieve events, please refresh</h1>)
-        // }
+            setLoaded(true);      
+        }
+        catch{
+            console.log("Could not retrieve, please refresh")
+        }
     };
     const [curAccount, setAccount] = useState(null);
     const [isLoaded, setLoaded] = useState(false);
