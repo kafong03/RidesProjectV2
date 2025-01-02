@@ -201,10 +201,11 @@ class StorageHandler{
         return newEvent;
     }
 
-    async CreateDriver(name, address, sunday1st, sunday2nd, sunday3rd, seats, contact){
+    async CreateDriver(name, address, friday, sunday1st, sunday2nd, sunday3rd, seats, contact){
         const id  = new ObjectId();
 
-        var newDriver = new DriverClass(id, name, address, sunday1st, sunday2nd, sunday3rd, seats, contact);
+        var newDriver = new DriverClass(id, name, address, friday, sunday1st, sunday2nd, sunday3rd, seats, contact);
+        console.log(newDriver.contact)
         this.curDriverList.push(newDriver);
 
         fetch(this.fetchURL + "driver", {

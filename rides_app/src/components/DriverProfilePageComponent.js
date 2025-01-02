@@ -1,5 +1,5 @@
 import { StorageContext } from "../Contexts";
-import {React, useContext, useState} from "react";
+import {React, useContext, useEffect, useState} from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const DriverProfilePageComponent = () => {
@@ -9,18 +9,48 @@ const DriverProfilePageComponent = () => {
     } = useAuth0();
 
     const StorageHandler = useContext(StorageContext); 
+    const [curDriver, setDriver] = useState(null);
+    const [isLoaded, setLoaded] = useState(false);
+    const [curAccount, setAccount] = useState(null);
 
     const [inputs, setInputs] = useState({});
     const [component, setComponent] = useState(<div>Edit information as needed</div>);
     const getCheckedFunction = (list) => {
         console.log(list);
     }
+    useEffect(() => {
+        if (user){
+            initializePage();
+        }
+            
+    }, [user])
+
+    const initializePage = async () => {
+        const account = await StorageHandler.GetAccount(user.email);
+        setAccount(account);
+        const driver = await StorageHandler.GetDriverById(account.accountId, true, false);
+        setDriver(driver);
+        console.log(driver);
+        setLoaded(true);   
+        // try{
+        //     const account = await StorageHandler.GetAccount(user.email);
+        //     setAccount(account);
+        //     const driver = await StorageHandler.GetDriverById(account.accountId, true, false);
+        //     setLoaded(true);      
+        // }
+        // catch{
+        //     return (<h1>Could not retrieve driver, please refresh</h1>)
+        // }
+    };
     
     if (! isAuthenticated){
         <div>Please login before viewing this page</div>
     }
 
-    const curAccount = StorageHandler.GetDriverAccount(user.email)
+    if (! isLoaded){
+        return (<h1>Loading</h1>)
+    }
+
     if (! curAccount){
         return (
             <div>
@@ -36,7 +66,6 @@ const DriverProfilePageComponent = () => {
             </div>
         );
     }
-    const curDriver = StorageHandler.GetDriverById(curAccount.accountId);
     
 
     if (!curDriver){
