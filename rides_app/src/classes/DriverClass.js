@@ -17,6 +17,19 @@ class DriverClass{
         this.note = note; //String
         this.labels = labels; //Array of String?
     }
+
+    AddUnavailability(addDate){
+        //Validate date
+        this.unavailable.add(addDate);
+    }
+
+    RemoveUnavailability(removeDate){
+        this.unavailable.delete(removeDate);
+    }
+
+    IsUnavailable(eventDate){
+        return [... this.unavailable].includes(curDate => curDate.toDateString() === eventDate);
+    }
     
     FromJSON(json){
         this._id = json._id;

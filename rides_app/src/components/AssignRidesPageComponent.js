@@ -79,6 +79,8 @@ const AssignRidesPageComponent = ({curEvent}) =>{
 
     // Use memo or ref to prevent rerender, may not be necessary
     const [masterDriverList, setMasterDriverList] = useState(null);
+    const [unavailableDriverList, setUnavailableDriver] = useState([]);
+
 
     var assignedPassengers = useMemo(() => new Set(), [assignedPassengers]);
 
@@ -169,6 +171,9 @@ const AssignRidesPageComponent = ({curEvent}) =>{
         dataGridApi.current = params.api;
         
         setDriverGrids([... masterDriverList.map(driver => {
+            if (driver.IsUnavailable(currentEvent.date.toDateString())){
+                setUnavailableDriver(curUnavailable => [...curUnavailable, driver]);
+            }
             return createDriverGrid(driver);
         })]);
         
@@ -201,7 +206,6 @@ const AssignRidesPageComponent = ({curEvent}) =>{
         }
 
         return (
-
         <li
     className={"ag-theme-quartz" + " "+ "PassengerGrid"} // applying the grid theme
     //Create ref in the .map, pass in to the ag grid. Set the list item id to the driver id. Store the api in a list, will be rendered every time anyway and the driver id will keep track of the necessary stuff. We don't want to pair them bc the positions need to change
