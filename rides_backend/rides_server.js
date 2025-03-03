@@ -5,7 +5,7 @@ app.use(express.json());
 app.use(cors());
 const port = process.env.PORT || 3001;
 
-const password = encodeURI("T3stR1d3");
+const password = encodeURI("<ADDPASSWORD>");
 const database = "BCCRidesDatabase";
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
